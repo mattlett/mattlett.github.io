@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Matteo Letterio — The Timeline</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,700;12..96,800&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0f0e0c;
+    --bg-2: #19161210;
+    --surface: rgba(255,255,255,0.035);
+    --line: rgba(242,238,230,0.12);
+    --line-faint: rgba(242,238,230,0.06);
+    --text: #f2eee6;
+    --muted: #a8a294;
+    --faint: #6c675c;
+    --gold: #e6a943;
+    --gold-soft: #f3cd7d;
+    --gold-deep: #2a210f;
+    --rail-x: 44px;
+    --content-pad: 56px;
+    --maxw: 1080px;
+    --disp: 'Bricolage Grotesque', sans-serif;
+    --body: 'Inter', sans-serif;
+    --mono: 'JetBrains Mono', monospace;
+  }
+
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--body);
+    font-size: 16px;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  ::selection { background: var(--gold); color: var(--gold-deep); }
+  a { color: inherit; }
+  a:focus-visible, button:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  /* ===== TOP BAR + PROGRESS ===== */
+  .topbar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 60;
+    height: 46px;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 clamp(1rem, 4vw, 2.5rem);
+    background: rgba(15,14,12,0.72);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--line-faint);
+  }
+  .topbar .brand {
+    font-family: var(--mono);
+    font-size: 12px; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--text);
+  }
+  .topbar .brand .dot-sep { color: var(--gold); margin: 0 7px; }
+  .topbar .url {
+    font-family: var(--mono);
+    font-size: 11.5px; letter-spacing: 0.06em;
+    color: var(--muted); text-decoration: none;
+    display: inline-flex; align-items: center; gap: 6px;
+    transition: color 0.25s;
+  }
+  .topbar .url:hover { color: var(--gold-soft); }
+  .topbar .url::before { content: '↗'; color: var(--gold); }
+  .progress-top {
+    position: fixed; top: 46px; left: 0; z-index: 60;
+    height: 2px; width: 0%;
+    background: var(--gold);
+    box-shadow: 0 0 12px rgba(230,169,67,0.55);
+  }
+
+  /* ===== YEAR HUD ===== */
+  .hud {
+    position: fixed; right: clamp(1rem, 4vw, 2.5rem); bottom: clamp(1rem, 4vw, 2rem);
+    z-index: 55; text-align: right;
+    pointer-events: none; user-select: none;
+    opacity: 0; transition: opacity 0.6s ease;
+  }
+  .hud.show { opacity: 1; }
+  .hud .hud-label {
+    font-family: var(--mono); font-size: 10px;
+    letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--faint); margin-bottom: 2px;
+  }
+  .hud .hud-year {
+    font-family: var(--mono); font-weight: 500;
+    font-size: clamp(2.4rem, 6vw, 3.6rem);
+    line-height: 1; color: var(--gold);
+    letter-spacing: -0.01em;
+    font-variant-numeric: tabular-nums;
+  }
+  .hud .hud-bar {
+    height: 2px; width: 100%; margin-top: 8px;
+    background: var(--line); position: relative; overflow: hidden;
+  }
+  .hud .hud-bar span {
+    position: absolute; inset: 0 auto 0 0; width: 0%;
+    background: var(--gold);
+  }
+  @keyframes yearOut {
+    0%   { opacity: 1; transform: translateY(0) scale(1); }
+    100% { opacity: 0; transform: translateY(-18px) scale(0.88); }
+  }
+  @keyframes yearIn {
+    0%   { opacity: 0; transform: translateY(18px) scale(0.88); }
+    100% { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  .hud-year.exit { animation: yearOut 0.18s ease forwards; }
+  .hud-year.enter { animation: yearIn 0.22s cubic-bezier(.2,.8,.3,1) forwards; }
+
+  /* ===== HERO ===== */
+  .hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column; justify-content: center;
+    max-width: var(--maxw); margin: 0 auto;
+    padding: 7rem clamp(1.25rem, 5vw, 3rem) 4rem;
+    position: relative;
+  }
+  .hero .eyebrow {
+    font-family: var(--mono); font-size: 12px;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 1.75rem;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .hero .eyebrow::before {
+    content: ''; width: 30px; height: 1px; background: var(--gold);
+  }
+  .hero h1 {
+    font-family: var(--disp); font-weight: 800;
+    font-size: clamp(3.2rem, 11vw, 8rem);
+    line-height: 0.92; letter-spacing: -0.035em;
+    margin-bottom: 1.75rem;
+  }
+  .hero h1 em { font-style: normal; color: var(--gold); }
+  .hero .thesis {
+    font-family: var(--disp); font-weight: 500;
+    font-size: clamp(1.3rem, 3.4vw, 2.1rem);
+    line-height: 1.25; letter-spacing: -0.01em;
+    max-width: 22ch; margin-bottom: 1.25rem; color: var(--text);
+  }
+  .hero .sub {
+    font-size: clamp(1rem, 1.6vw, 1.15rem);
+    color: var(--muted); max-width: 50ch; line-height: 1.7;
+    margin-bottom: 2.5rem;
+  }
+  .hero .sub strong { color: var(--text); font-weight: 500; }
+  .scroll-cue {
+    display: inline-flex; align-items: center; gap: 12px;
+    font-family: var(--mono); font-size: 12px;
+    letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--faint);
+  }
+  .scroll-cue .chev {
+    width: 26px; height: 26px; border: 1px solid var(--line);
+    border-radius: 50%; display: inline-flex;
+    align-items: center; justify-content: center;
+    color: var(--gold);
+    animation: bob 1.8s ease-in-out infinite;
+  }
+  @keyframes bob { 0%,100%{ transform: translateY(0);} 50%{ transform: translateY(5px);} }
+
+  /* hero load animation */
+  .h-anim { opacity: 0; transform: translateY(26px); }
+  .loaded .h-anim {
+    opacity: 1; transform: none;
+    transition: opacity 0.8s cubic-bezier(.2,.7,.2,1), transform 0.8s cubic-bezier(.2,.7,.2,1);
+  }
+  .loaded .h-anim.d1 { transition-delay: 0.05s; }
+  .loaded .h-anim.d2 { transition-delay: 0.18s; }
+  .loaded .h-anim.d3 { transition-delay: 0.31s; }
+  .loaded .h-anim.d4 { transition-delay: 0.44s; }
+  .loaded .h-anim.d5 { transition-delay: 0.57s; }
+
+  /* ===== TIMELINE ===== */
+  .timeline-wrap {
+    position: relative;
+    max-width: var(--maxw); margin: 0 auto;
+    padding: 0 clamp(1.25rem, 5vw, 3rem);
+  }
+  .tl-line, .tl-fill {
+    position: absolute; top: 0; bottom: 0;
+    left: calc(clamp(1.25rem, 5vw, 3rem) + var(--rail-x));
+    width: 2px;
+  }
+  .tl-line { background: var(--line-faint); }
+  .tl-fill {
+    bottom: auto; height: 0;
+    background: linear-gradient(var(--gold-soft), var(--gold));
+    box-shadow: 0 0 14px rgba(230,169,67,0.4);
+    transition: height 0.08s linear;
+  }
+
+  .chapter {
+    position: relative;
+    padding: clamp(4rem, 11vh, 8rem) 0 clamp(4rem, 11vh, 8rem) calc(var(--rail-x) + var(--content-pad));
+    overflow: hidden;
+  }
+  .chapter .ghost {
+    position: absolute; top: -0.18em; right: -0.5vw; z-index: 0;
+    font-family: var(--disp); font-weight: 800;
+    font-size: clamp(7rem, 24vw, 19rem);
+    line-height: 1; letter-spacing: -0.04em;
+    color: rgba(242,238,230,0.035);
+    white-space: nowrap; pointer-events: none; user-select: none;
+  }
+  .chapter .dot {
+    position: absolute; z-index: 3;
+    left: var(--rail-x); top: clamp(4rem, 11vh, 8rem);
+    width: 15px; height: 15px; border-radius: 50%;
+    background: var(--bg); border: 2px solid var(--faint);
+    transform: translate(-50%, 4px);
+    transition: border-color 0.4s, background 0.4s, box-shadow 0.4s;
+  }
+  .chapter .dot.active {
+    border-color: var(--gold); background: var(--gold);
+    box-shadow: 0 0 0 5px rgba(230,169,67,0.16);
+  }
+  .chapter .inner { position: relative; z-index: 2; max-width: 640px; }
+
+  .chapter .chip-no {
+    font-family: var(--mono); font-size: 11.5px;
+    letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--faint); margin-bottom: 0.5rem;
+  }
+  .chapter .period {
+    font-family: var(--mono); font-size: 13px;
+    letter-spacing: 0.05em; color: var(--gold);
+    margin-bottom: 1.1rem;
+    display: inline-flex; align-items: center; gap: 9px;
+  }
+  .chapter .period::before {
+    content: ''; width: 18px; height: 1px; background: var(--gold);
+  }
+  .chapter h2 {
+    font-family: var(--disp); font-weight: 800;
+    font-size: clamp(2.1rem, 5.5vw, 3.6rem);
+    line-height: 1.0; letter-spacing: -0.03em;
+    margin-bottom: 0.35rem;
+  }
+  .chapter .role {
+    font-family: var(--body); font-weight: 400;
+    font-size: clamp(0.95rem, 1.6vw, 1.1rem);
+    color: var(--muted); margin-bottom: 1.5rem;
+  }
+  .chapter .role .sep { color: var(--faint); margin: 0 9px; }
+  .chapter p.body {
+    font-size: clamp(1rem, 1.55vw, 1.13rem);
+    color: var(--muted); line-height: 1.75; max-width: 56ch;
+  }
+  .chapter p.body strong { color: var(--text); font-weight: 500; }
+  .chapter p.body + p.body { margin-top: 1rem; }
+
+  /* metric row (ScriptSwap) */
+  .metrics {
+    display: flex; flex-wrap: wrap; gap: clamp(1.5rem, 5vw, 3.5rem);
+    margin: 0 0 1.9rem;
+  }
+  .metric .m-num {
+    font-family: var(--disp); font-weight: 800;
+    font-size: clamp(2.2rem, 6vw, 3.4rem);
+    line-height: 1; color: var(--gold);
+    letter-spacing: -0.02em; font-variant-numeric: tabular-nums;
+  }
+  .metric .m-label {
+    font-family: var(--mono); font-size: 11px;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--muted); margin-top: 8px;
+  }
+
+  /* tech chips */
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 1.6rem; }
+  .chips .c {
+    font-family: var(--mono); font-size: 12px;
+    letter-spacing: 0.02em;
+    padding: 6px 13px; border-radius: 99px;
+    background: var(--surface); border: 1px solid var(--line-faint);
+    color: var(--muted);
+  }
+  .chips .c.key {
+    border-color: rgba(230,169,67,0.45);
+    color: var(--gold-soft);
+  }
+
+  /* inset project card */
+  .inset {
+    margin-top: 1.8rem; padding: 1.4rem 1.5rem;
+    background: var(--surface); border: 1px solid var(--line-faint);
+    border-left: 2px solid var(--gold);
+    border-radius: 4px;
+  }
+  .inset .ins-label {
+    font-family: var(--mono); font-size: 10.5px;
+    letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--faint); margin-bottom: 7px;
+  }
+  .inset .ins-title {
+    font-family: var(--disp); font-weight: 700;
+    font-size: 1.2rem; margin-bottom: 0.5rem; letter-spacing: -0.01em;
+  }
+  .inset p {
+    font-size: 0.97rem; color: var(--muted); line-height: 1.65; max-width: 58ch;
+  }
+
+  /* stack strip */
+  .stack-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 1px; background: var(--line-faint);
+    border: 1px solid var(--line-faint); border-radius: 6px;
+    overflow: hidden; margin-top: 1.6rem;
+  }
+  .stack-grid .col { background: var(--bg); padding: 1.25rem 1.3rem; }
+  .stack-grid .col h4 {
+    font-family: var(--mono); font-weight: 400; font-size: 10.5px;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--faint); margin-bottom: 11px;
+  }
+  .stack-grid .col .tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .stack-grid .col .tags span {
+    font-size: 12.5px; color: var(--muted);
+    font-family: var(--mono);
+  }
+  .stack-grid .col .tags span:not(:last-child)::after {
+    content: '·'; color: var(--faint); margin-left: 6px;
+  }
+
+  /* contact (in final chapter) */
+  .contact-links {
+    display: flex; flex-direction: column; gap: 2px; margin-top: 2rem;
+  }
+  .contact-links a {
+    display: flex; align-items: baseline; gap: 1.25rem;
+    text-decoration: none; padding: 14px 0;
+    border-top: 1px solid var(--line-faint);
+    transition: padding-left 0.3s, color 0.3s;
+  }
+  .contact-links a:last-child { border-bottom: 1px solid var(--line-faint); }
+  .contact-links a:hover { padding-left: 12px; }
+  .contact-links a:hover .c-val { color: var(--gold-soft); }
+  .contact-links a:hover .c-arrow { opacity: 1; transform: translateX(0); }
+  .contact-links .c-key {
+    font-family: var(--mono); font-size: 11px;
+    letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--faint); min-width: 96px; flex-shrink: 0;
+  }
+  .contact-links .c-val {
+    font-family: var(--disp); font-weight: 500;
+    font-size: clamp(1.15rem, 2.6vw, 1.7rem);
+    color: var(--text); letter-spacing: -0.01em;
+    transition: color 0.3s; flex: 1;
+  }
+  .contact-links .c-arrow {
+    color: var(--gold); font-size: 1.2rem;
+    opacity: 0; transform: translateX(-8px);
+    transition: opacity 0.3s, transform 0.3s;
+  }
+
+  /* ===== FOOTER ===== */
+  footer {
+    max-width: var(--maxw); margin: 0 auto;
+    padding: 3rem clamp(1.25rem, 5vw, 3rem) 4rem;
+    border-top: 1px solid var(--line-faint);
+    display: flex; justify-content: space-between; align-items: center;
+    flex-wrap: wrap; gap: 1rem;
+    font-family: var(--mono); font-size: 11.5px;
+    letter-spacing: 0.08em; color: var(--faint);
+  }
+  footer .back {
+    text-decoration: none; color: var(--muted);
+    display: inline-flex; align-items: center; gap: 7px;
+    transition: color 0.25s;
+  }
+  footer .back:hover { color: var(--gold-soft); }
+
+  /* ===== REVEAL ===== */
+  .reveal { opacity: 0; transform: translateY(24px); }
+  .reveal.in {
+    opacity: 1; transform: none;
+    transition: opacity 0.7s cubic-bezier(.2,.7,.2,1), transform 0.7s cubic-bezier(.2,.7,.2,1);
+  }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 680px) {
+    :root { --rail-x: 22px; --content-pad: 30px; }
+    .topbar .url { display: none; }
+    .chapter .ghost { font-size: clamp(5.5rem, 34vw, 11rem); top: -0.1em; opacity: 0.85; }
+    .hud { bottom: 14px; right: 14px; }
+    .contact-links .c-key { min-width: 74px; }
+    .stack-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 420px) {
+    .chapter .role .sep { display: block; height: 0; margin: 2px 0; }
+    .chapter .role .sep::after { content: ''; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .reveal, .h-anim { opacity: 1 !important; transform: none !important; transition: none !important; }
+    .tl-fill { transition: none; }
+    .scroll-cue .chev { animation: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <span class="brand">Matteo Letterio<span class="dot-sep">/</span>Full-Stack Dev</span>
+</div>
+<div class="progress-top" id="progressTop"></div>
+
+<!-- YEAR HUD -->
+<div class="hud" id="hud">
+  <div class="hud-label">The year</div>
+  <div class="hud-year" id="hudYear">2019</div>
+  <div class="hud-bar"><span id="hudBar"></span></div>
+</div>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="eyebrow h-anim d1">Building since 2019 · King City, ON</div>
+  <h1 class="h-anim d2">Matteo<br><em>Letterio</em></h1>
+  <p class="thesis h-anim d3">I've been building businesses since I was eleven.</p>
+  <p class="sub h-anim d4">From a clothing label in middle school to a <strong>Solana marketplace I sold seven months after launch</strong>. This is the timeline — scroll through the years.</p>
+  <div class="h-anim d5">
+    <span class="scroll-cue">Scroll to begin <span class="chev">↓</span></span>
+  </div>
+</header>
+
+<!-- TIMELINE -->
+<div class="timeline-wrap" id="timeline">
+  <div class="tl-line"></div>
+  <div class="tl-fill" id="tlFill"></div>
+
+  <!-- CHAPTER 01 — PRIMAL -->
+  <section class="chapter" data-year="2019">
+    <div class="ghost" aria-hidden="true">2019</div>
+    <div class="dot"></div>
+    <div class="inner">
+      <div class="chip-no reveal">Chapter 01 · Age 11</div>
+      <div class="period reveal" style="transition-delay:.06s">2019 · The origin</div>
+      <h2 class="reveal" style="transition-delay:.1s">Primal</h2>
+      <div class="role reveal" style="transition-delay:.16s">Founder · Clothing brand &amp; first e-commerce business</div>
+      <p class="body reveal" style="transition-delay:.22s">My first business. At eleven I started <strong>Primal</strong>, a clothing brand — designing the pieces, building the storefront, and figuring out how to actually sell something online.</p>
+      <p class="body reveal" style="transition-delay:.28s">It was small, but it was real. It taught me the whole loop before I had words for any of it: product, brand, customers, fulfillment. That was the first time I felt the pull of building something people actually wanted — and it never really let go.</p>
+    </div>
+  </section>
+
+  <!-- CHAPTER 02 — SELF-TAUGHT -->
+  <section class="chapter" data-year="2022">
+    <div class="ghost" aria-hidden="true">2022</div>
+    <div class="dot"></div>
+    <div class="inner">
+      <div class="chip-no reveal">Chapter 02 · 2022 – 2025</div>
+      <div class="period reveal" style="transition-delay:.06s">The self-taught years</div>
+      <h2 class="reveal" style="transition-delay:.1s">Teaching myself<br>to build</h2>
+      <div class="role reveal" style="transition-delay:.16s">Harvard · Stanford · MIT · Yale · AWS</div>
+      <p class="body reveal" style="transition-delay:.22s">While finishing high school, I went looking for the real thing. No one assigned this — I just wanted to understand how software, and the businesses built on top of it, actually work.</p>
+      <div class="chips reveal" style="transition-delay:.28s">
+        <span class="c key">CS50 · Computer Science</span>
+        <span class="c key">CS50 · AI with Python</span>
+        <span class="c">Supervised Machine Learning</span>
+        <span class="c">Tackling Big Data</span>
+        <span class="c">Financial Markets</span>
+        <span class="c">Intro to Negotiation</span>
+        <span class="c">Cloud Security Essentials</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- CHAPTER 03 — TOWNSHIP -->
+  <section class="chapter" data-year="2025">
+    <div class="ghost" aria-hidden="true">2025</div>
+    <div class="dot"></div>
+    <div class="inner">
+      <div class="chip-no reveal">Chapter 03 · Summer 2025</div>
+      <div class="period reveal" style="transition-delay:.06s">Jul 2025 – Aug 2025</div>
+      <h2 class="reveal" style="transition-delay:.1s">Township of King</h2>
+      <div class="role reveal" style="transition-delay:.16s">Youth Program Facilitator <span class="sep">·</span> Nobleton, ON</div>
+      <p class="body reveal" style="transition-delay:.22s">A summer running daily programming for kids and teens — keeping groups <strong>safe, included, and actually having fun</strong>.</p>
+      <p class="body reveal" style="transition-delay:.28s">Building software is solitary; this wasn't. It sharpened the part of the job that has nothing to do with code: reading a room, earning trust, and keeping a group of people engaged when it would be easier to lose them.</p>
+    </div>
+  </section>
+
+  <!-- CHAPTER 04 — SCRIPTSWAP (PEAK) -->
+  <section class="chapter" data-year="2025">
+    <div class="ghost" aria-hidden="true">2025</div>
+    <div class="dot"></div>
+    <div class="inner">
+      <div class="chip-no reveal">Chapter 04 · The flagship</div>
+      <div class="period reveal" style="transition-delay:.06s">Oct 2025 – Apr 2026</div>
+      <h2 class="reveal" style="transition-delay:.1s">ScriptSwap</h2>
+      <div class="role reveal" style="transition-delay:.16s">Founder &amp; Full-Stack Developer <span class="sep">·</span> Remote</div>
+
+      <div class="metrics reveal" id="metrics" style="transition-delay:.2s">
+        <div class="metric">
+          <div class="m-num" data-count="200" data-prefix="$" data-suffix="K+">$0</div>
+          <div class="m-label">Revenue generated</div>
+        </div>
+        <div class="metric">
+          <div class="m-num" data-count="350" data-suffix="+">0</div>
+          <div class="m-label">Active users</div>
+        </div>
+        <div class="metric">
+          <div class="m-num" data-count="7" data-suffix=" mo">0</div>
+          <div class="m-label">Build to exit</div>
+        </div>
+      </div>
+
+      <p class="body reveal" style="transition-delay:.26s">The one I'm proudest of. I designed, built, and shipped a <strong>full-stack Solana marketplace end to end</strong> — product, engineering, and operations, all of it mine.</p>
+      <p class="body reveal" style="transition-delay:.32s">JavaScript and Node.js on Firebase. Secure auth with Firebase Authentication, a Firestore backend served through serverless Cloud Functions and REST APIs, and on-chain SOL transactions powering every payment. It grew to 350+ active users and over $200,000 in revenue. <strong>Seven months after launch, I negotiated its sale.</strong></p>
+      <p class="body reveal" style="transition-delay:.35s">I still own the domain and all rights. The sale was the first chapter — <strong>a relaunch is already in the works, bigger and better.</strong></p>
+
+      <div class="chips reveal" style="transition-delay:.38s">
+        <span class="c key">JavaScript</span>
+        <span class="c key">Node.js</span>
+        <span class="c">Firebase</span>
+        <span class="c">Firestore</span>
+        <span class="c">Cloud Functions</span>
+        <span class="c">REST APIs</span>
+        <span class="c">Solana / SOL</span>
+        <span class="c">On-chain payments</span>
+      </div>
+
+      <div class="inset reveal" style="transition-delay:.44s">
+        <div class="ins-label">Also from this period · Selected project</div>
+        <div class="ins-title">Blockchain fund-tracing analysis</div>
+        <p>Traced stolen cryptocurrency by analyzing on-chain transaction histories and following fund flows across multiple wallets — then identified the people responsible by clustering related addresses and linking on-chain activity to real-world actors.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CHAPTER 05 — ELITE CARDS -->
+  <section class="chapter" data-year="2025">
+    <div class="ghost" aria-hidden="true">2025</div>
+    <div class="dot"></div>
+    <div class="inner">
+      <div class="chip-no reveal">Chapter 05 · Alongside the building</div>
+      <div class="period reveal" style="transition-delay:.06s">Nov 2025 – Present</div>
+      <h2 class="reveal" style="transition-delay:.1s">Elite Cards Toronto</h2>
+      <div class="role reveal" style="transition-delay:.16s">Client Engagement Specialist <span class="sep">·</span> Woodbridge, ON</div>
+      <p class="body reveal" style="transition-delay:.22s">Alongside building, I sell. At Elite Cards I <strong>consistently beat weekly targets</strong> through value-based upselling and deep product knowledge across major sports and trading-card categories — turning product fluency into revenue, face to face.</p>
+    </div>
+  </section>
+
+  <!-- CHAPTER 06 — NOW -->
+  <section class="chapter" data-year="2026">
+    <div class="ghost" aria-hidden="true">2026</div>
+    <div class="dot"></div>
+    <div class="inner">
+      <div class="chip-no reveal">Chapter 06 · The present</div>
+      <div class="period reveal" style="transition-delay:.06s">2026 · Now</div>
+      <h2 class="reveal" style="transition-delay:.1s">What's next</h2>
+      <p class="body reveal" style="transition-delay:.18s">I graduate this June with my OSSD from Cardinal Carter Catholic High School.</p>
+      <p class="body reveal" style="transition-delay:.24s">I've been doing this for myself since I was eleven. Now I want to do it on a team.</p>
+
+      <div class="stack-grid reveal" style="transition-delay:.3s">
+        <div class="col">
+          <h4>Languages</h4>
+          <div class="tags"><span>JavaScript</span><span>Python</span><span>HTML</span><span>CSS</span></div>
+        </div>
+        <div class="col">
+          <h4>Backend &amp; APIs</h4>
+          <div class="tags"><span>Node.js</span><span>Cloud Functions</span><span>REST</span><span>Stripe</span><span>Firestore</span></div>
+        </div>
+        <div class="col">
+          <h4>Cloud &amp; tools</h4>
+          <div class="tags"><span>Firebase</span><span>AWS</span><span>Git</span><span>GitHub</span></div>
+        </div>
+        <div class="col">
+          <h4>Web3</h4>
+          <div class="tags"><span>Solana</span><span>SOL</span><span>On-chain</span><span>Wallet analysis</span></div>
+        </div>
+      </div>
+
+      <div class="contact-links reveal" style="transition-delay:.36s">
+        <a href="mailto:lettmatt51@gmail.com">
+          <span class="c-key">Email</span><span class="c-val">lettmatt51@gmail.com</span><span class="c-arrow">↗</span>
+        </a>
+        <a href="tel:+14373291375">
+          <span class="c-key">Phone</span><span class="c-val">+1 (437) 329-1375</span><span class="c-arrow">↗</span>
+        </a>
+        <a href="https://linkedin.com/in/matteo-letterio" target="_blank" rel="noopener">
+          <span class="c-key">LinkedIn</span><span class="c-val">matteo-letterio</span><span class="c-arrow">↗</span>
+        </a>
+        <a href="https://github.com/mattlett" target="_blank" rel="noopener">
+          <span class="c-key">GitHub</span><span class="c-val">mattlett</span><span class="c-arrow">↗</span>
+        </a>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <span>© 2026 Matteo Letterio</span>
+  <a class="back" href="#top" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;">↑ Back to the start</a>
+</footer>
+
+<script>
+(function () {
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* hero load-in */
+  window.addEventListener('load', function () {
+    requestAnimationFrame(function () { document.body.classList.add('loaded'); });
+    setTimeout(measure, 120);
+  });
+  document.body.classList.add('loaded');
+
+  /* reveal on scroll */
+  var revealEls = document.querySelectorAll('.reveal');
+  if ('IntersectionObserver' in window && !reduceMotion) {
+    var ro = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { e.target.classList.add('in'); ro.unobserve(e.target); }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+    revealEls.forEach(function (el) { ro.observe(el); });
+  } else {
+    revealEls.forEach(function (el) { el.classList.add('in'); });
+  }
+
+  /* counters */
+  var metricsBlock = document.getElementById('metrics');
+  var counted = false;
+  function runCounters() {
+    if (counted) return; counted = true;
+    document.querySelectorAll('.m-num[data-count]').forEach(function (el) {
+      var target = parseInt(el.getAttribute('data-count'), 10);
+      var prefix = el.getAttribute('data-prefix') || '';
+      var suffix = el.getAttribute('data-suffix') || '';
+      if (reduceMotion) { el.textContent = prefix + target + suffix; return; }
+      var start = null, dur = 1400;
+      function step(ts) {
+        if (!start) start = ts;
+        var p = Math.min((ts - start) / dur, 1);
+        var eased = 1 - Math.pow(1 - p, 3);
+        el.textContent = prefix + Math.round(target * eased) + suffix;
+        if (p < 1) requestAnimationFrame(step);
+        else el.textContent = prefix + target + suffix;
+      }
+      requestAnimationFrame(step);
+    });
+  }
+  if (metricsBlock && 'IntersectionObserver' in window) {
+    var co = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) { if (e.isIntersecting) { runCounters(); co.disconnect(); } });
+    }, { threshold: 0.4 });
+    co.observe(metricsBlock);
+  } else { runCounters(); }
+
+  /* scroll-driven spine, HUD, progress */
+  var timeline = document.getElementById('timeline');
+  var tlFill = document.getElementById('tlFill');
+  var dots = Array.prototype.slice.call(document.querySelectorAll('.chapter .dot'));
+  var chapters = Array.prototype.slice.call(document.querySelectorAll('.chapter'));
+  var progressTop = document.getElementById('progressTop');
+  var hud = document.getElementById('hud');
+  var hudYear = document.getElementById('hudYear');
+  var hudBar = document.getElementById('hudBar');
+
+  var wrapTop = 0, wrapH = 0, dotYs = [], chapTops = [], chapBots = [];
+  var years = chapters.map(function (c) { return c.getAttribute('data-year'); });
+  var firstYear = parseInt(years[0], 10);
+  var lastYear = parseInt(years[years.length - 1], 10);
+
+  function measure() {
+    var rect = timeline.getBoundingClientRect();
+    wrapTop = rect.top + window.pageYOffset;
+    wrapH = timeline.offsetHeight;
+    dotYs = dots.map(function (d) {
+      var ch = d.closest('.chapter');
+      return ch.offsetTop + d.offsetTop;
+    });
+    chapTops = chapters.map(function (c) { return c.offsetTop; });
+    chapBots = chapters.map(function (c) { return c.offsetTop + c.offsetHeight; });
+    onScroll();
+  }
+
+  var ticking = false;
+  function onScroll() {
+    var scrollY = window.pageYOffset;
+    var vh = window.innerHeight;
+    var docH = document.documentElement.scrollHeight - vh;
+
+    /* top progress */
+    var gp = docH > 0 ? Math.min(Math.max(scrollY / docH, 0), 1) : 0;
+    progressTop.style.width = (gp * 100) + '%';
+
+    /* playhead within timeline */
+    var playhead = scrollY + vh * 0.5;
+    var posInWrap = playhead - wrapTop;
+    var fillPx = Math.min(Math.max(posInWrap, 0), wrapH);
+    tlFill.style.height = fillPx + 'px';
+
+    /* dots */
+    for (var i = 0; i < dots.length; i++) {
+      if (fillPx >= dotYs[i] - 1) dots[i].classList.add('active');
+      else dots[i].classList.remove('active');
+    }
+
+    /* HUD show + year */
+    var atBottom = (scrollY + vh) >= (document.documentElement.scrollHeight - 10);
+    var inTimeline = posInWrap > -vh * 0.35 && posInWrap < wrapH + vh * 0.2;
+    if (inTimeline && !atBottom) hud.classList.add('show'); else hud.classList.remove('show');
+
+    var activeIdx = 0;
+    for (var j = 0; j < chapters.length; j++) {
+      if (posInWrap >= chapTops[j]) activeIdx = j;
+    }
+    var y = years[activeIdx];
+    if (hudYear.textContent !== y) {
+      hudYear.classList.remove('enter');
+      hudYear.classList.add('exit');
+      var nextY = y;
+      setTimeout(function () {
+        hudYear.textContent = nextY;
+        hudYear.classList.remove('exit');
+        hudYear.classList.add('enter');
+      }, 180);
+    }
+
+    /* hud bar: progress across full span of years */
+    var span = (lastYear - firstYear) || 1;
+    var curY = parseInt(y, 10);
+    var withinChapter = 0;
+    var ct = chapTops[activeIdx], cb = chapBots[activeIdx];
+    if (cb > ct) withinChapter = Math.min(Math.max((posInWrap - ct) / (cb - ct), 0), 1);
+    var yearProg = ((curY - firstYear) + withinChapter * 0.0) / span;
+    hudBar.style.width = (Math.min(Math.max(yearProg, 0), 1) * 100) + '%';
+
+    ticking = false;
+  }
+
+  window.addEventListener('scroll', function () {
+    if (!ticking) { ticking = true; requestAnimationFrame(onScroll); }
+  }, { passive: true });
+  window.addEventListener('resize', function () {
+    clearTimeout(window.__rt);
+    window.__rt = setTimeout(measure, 120);
+  });
+
+  measure();
+  setTimeout(measure, 400);
+})();
+</script>
+</body>
+</html>
