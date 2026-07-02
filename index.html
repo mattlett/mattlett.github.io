@@ -1,415 +1,446 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Matteo Letterio — The Timeline</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#f6f4ec" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#11150f" media="(prefers-color-scheme: dark)">
+<title>Matteo Letterio — Record of Work</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,700;12..96,800&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,62..125,100..900;1,62..125,100..900&family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
-    --bg: #0f0e0c;
-    --bg-2: #19161210;
-    --surface: rgba(255,255,255,0.035);
-    --line: rgba(242,238,230,0.12);
-    --line-faint: rgba(242,238,230,0.06);
-    --text: #f2eee6;
-    --muted: #a8a294;
-    --faint: #6c675c;
-    --gold: #e6a943;
-    --gold-soft: #f3cd7d;
-    --gold-deep: #2a210f;
-    --rail-x: 44px;
-    --content-pad: 56px;
-    --maxw: 1080px;
-    --disp: 'Bricolage Grotesque', sans-serif;
-    --body: 'Inter', sans-serif;
-    --mono: 'JetBrains Mono', monospace;
+    --paper: #f6f4ec;
+    --paper-2: #efece1;
+    --ink: #131a16;
+    --ink-soft: #3c463f;
+    --muted: #6b7269;
+    --rule: rgba(19,26,22,0.16);
+    --rule-faint: rgba(19,26,22,0.08);
+    --green: #0b5c3d;
+    --green-soft: #e3ece4;
+    --red: #a83226;
+    --red-soft: rgba(168,50,38,0.08);
+    --maxw: 1160px;
+    --disp: 'Archivo', sans-serif;
+    --serif: 'Newsreader', serif;
+    --mono: 'IBM Plex Mono', monospace;
   }
 
+  html[data-theme="dark"] {
+    --paper: #12160f;
+    --paper-2: #171c13;
+    --ink: #ece9dd;
+    --ink-soft: #c2c0b2;
+    --muted: #8b8a7c;
+    --rule: rgba(236,233,221,0.18);
+    --rule-faint: rgba(236,233,221,0.09);
+    --green: #58b884;
+    --green-soft: rgba(88,184,132,0.10);
+    --red: #e0604f;
+    --red-soft: rgba(224,96,79,0.10);
+  }
   html { scroll-behavior: smooth; }
+  body, .topbar, .yeartab, .note, .duo .cell {
+    transition: background-color .35s ease, color .35s ease, border-color .35s ease;
+  }
   body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--body);
-    font-size: 16px;
-    line-height: 1.7;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--serif);
+    font-size: 17px;
+    line-height: 1.65;
     -webkit-font-smoothing: antialiased;
     overflow-x: hidden;
   }
-  ::selection { background: var(--gold); color: var(--gold-deep); }
+  /* subtle paper grain */
+  body::before {
+    content: ''; position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background-image: radial-gradient(rgba(19,26,22,0.028) 1px, transparent 1px);
+  }
+  html[data-theme="dark"] body::before {
+    background-image: radial-gradient(rgba(236,233,221,0.03) 1px, transparent 1px);
+    background-size: 5px 5px;
+  }
+  ::selection { background: var(--green); color: var(--paper); }
   a { color: inherit; }
   a:focus-visible, button:focus-visible {
-    outline: 2px solid var(--gold);
+    outline: 2px solid var(--green);
     outline-offset: 3px;
-    border-radius: 2px;
   }
 
-  /* ===== TOP BAR + PROGRESS ===== */
+  .disp { font-family: var(--disp); }
+  .mono { font-family: var(--mono); }
+
+  /* ===== FIXED CHROME ===== */
   .topbar {
     position: fixed; top: 0; left: 0; right: 0; z-index: 60;
-    height: 46px;
+    height: 52px;
     display: flex; align-items: center; justify-content: space-between;
     padding: 0 clamp(1rem, 4vw, 2.5rem);
-    background: rgba(15,14,12,0.72);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
-    border-bottom: 1px solid var(--line-faint);
+    background: color-mix(in srgb, var(--paper) 88%, transparent);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--rule);
   }
   .topbar .brand {
-    font-family: var(--mono);
-    font-size: 12px; letter-spacing: 0.12em;
-    text-transform: uppercase; color: var(--text);
+    font-family: var(--mono); font-size: 11.5px; font-weight: 600;
+    letter-spacing: 0.14em; text-transform: uppercase;
   }
-  .topbar .brand .dot-sep { color: var(--gold); margin: 0 7px; }
-  .topbar .url {
-    font-family: var(--mono);
-    font-size: 11.5px; letter-spacing: 0.06em;
-    color: var(--muted); text-decoration: none;
-    display: inline-flex; align-items: center; gap: 6px;
-    transition: color 0.25s;
+  .topbar .brand em { font-style: normal; color: var(--green); }
+  .topbar .tb-right {
+    font-family: var(--mono); font-size: 11px;
+    letter-spacing: 0.1em; color: var(--muted);
+    text-transform: uppercase;
   }
-  .topbar .url:hover { color: var(--gold-soft); }
-  .topbar .url::before { content: '↗'; color: var(--gold); }
+  .tb-wrap { display: flex; align-items: center; gap: 14px; }
+  .theme-btn {
+    font-family: var(--mono); font-size: 10.5px; font-weight: 600;
+    letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--ink); background: none;
+    border: 1px solid var(--rule); padding: 6px 12px;
+    cursor: pointer; display: inline-flex; align-items: center; gap: 7px;
+    transition: border-color .25s, color .25s, background .25s;
+    min-height: 30px;
+  }
+  .theme-btn:hover { border-color: var(--green); color: var(--green); }
+  .theme-btn .sw {
+    width: 9px; height: 9px; border-radius: 50%;
+    background: var(--ink); display: inline-block;
+    transition: background .25s;
+  }
+  html[data-theme="dark"] .theme-btn .sw { background: var(--green); }
   .progress-top {
-    position: fixed; top: 46px; left: 0; z-index: 60;
-    height: 2px; width: 0%;
-    background: var(--gold);
-    box-shadow: 0 0 12px rgba(230,169,67,0.55);
+    position: fixed; top: 52px; left: 0; z-index: 60;
+    height: 2px; width: 0%; background: var(--green);
   }
 
-  /* ===== YEAR HUD ===== */
-  .hud {
-    position: fixed; right: clamp(1rem, 4vw, 2.5rem); bottom: clamp(1rem, 4vw, 2rem);
-    z-index: 55; text-align: right;
+  /* year tab */
+  .yeartab {
+    position: fixed; right: 0; bottom: clamp(1.25rem, 5vh, 3rem); z-index: 55;
+    background: var(--paper); border: 1px solid var(--rule); border-right: 0;
+    padding: 10px 18px 10px 16px;
+    box-shadow: -3px 3px 0 var(--rule-faint);
     pointer-events: none; user-select: none;
-    opacity: 0; transition: opacity 0.6s ease;
+    transform: translateX(105%); transition: transform 0.45s cubic-bezier(.2,.8,.25,1);
   }
-  .hud.show { opacity: 1; }
-  .hud .hud-label {
-    font-family: var(--mono); font-size: 10px;
-    letter-spacing: 0.22em; text-transform: uppercase;
-    color: var(--faint); margin-bottom: 2px;
+  .yeartab.show { transform: translateX(0); }
+  .yeartab .yt-label {
+    font-family: var(--mono); font-size: 9px; letter-spacing: 0.24em;
+    text-transform: uppercase; color: var(--muted); margin-bottom: 1px;
   }
-  .hud .hud-year {
-    font-family: var(--mono); font-weight: 500;
-    font-size: clamp(2.4rem, 6vw, 3.6rem);
-    line-height: 1; color: var(--gold);
+  .yeartab .yt-year {
+    font-family: var(--disp); font-weight: 800; font-stretch: 110%;
+    font-size: clamp(1.7rem, 4vw, 2.3rem); line-height: 1;
+    color: var(--red); font-variant-numeric: tabular-nums;
     letter-spacing: -0.01em;
-    font-variant-numeric: tabular-nums;
   }
-  .hud .hud-bar {
-    height: 2px; width: 100%; margin-top: 8px;
-    background: var(--line); position: relative; overflow: hidden;
-  }
-  .hud .hud-bar span {
-    position: absolute; inset: 0 auto 0 0; width: 0%;
-    background: var(--gold);
-  }
-  @keyframes yearOut {
-    0%   { opacity: 1; transform: translateY(0) scale(1); }
-    100% { opacity: 0; transform: translateY(-18px) scale(0.88); }
-  }
-  @keyframes yearIn {
-    0%   { opacity: 0; transform: translateY(18px) scale(0.88); }
-    100% { opacity: 1; transform: translateY(0) scale(1); }
-  }
-  .hud-year.exit { animation: yearOut 0.18s ease forwards; }
-  .hud-year.enter { animation: yearIn 0.22s cubic-bezier(.2,.8,.3,1) forwards; }
+  @keyframes ytIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+  .yt-year.tick { animation: ytIn 0.28s cubic-bezier(.2,.8,.3,1); }
+
+  /* ===== SHELL ===== */
+  .shell { position: relative; z-index: 1; max-width: var(--maxw); margin: 0 auto; padding: 0 clamp(1.1rem, 4.5vw, 3rem); }
 
   /* ===== HERO ===== */
-  .hero {
-    min-height: 100vh;
-    display: flex; flex-direction: column; justify-content: center;
-    max-width: var(--maxw); margin: 0 auto;
-    padding: 7rem clamp(1.25rem, 5vw, 3rem) 4rem;
-    position: relative;
+  .hero { min-height: 100svh; display: flex; flex-direction: column; justify-content: flex-end; padding-top: 52px; padding-bottom: clamp(1.5rem, 4vh, 3rem); }
+  .hero .kicker {
+    font-family: var(--mono); font-size: clamp(10px, 1.4vw, 12px);
+    letter-spacing: 0.22em; text-transform: uppercase; color: var(--ink-soft);
+    display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+    border-bottom: 1px solid var(--ink); padding-bottom: 10px; margin-bottom: clamp(1.2rem, 3vh, 2rem);
   }
-  .hero .eyebrow {
-    font-family: var(--mono); font-size: 12px;
-    letter-spacing: 0.2em; text-transform: uppercase;
-    color: var(--gold); margin-bottom: 1.75rem;
-    display: flex; align-items: center; gap: 12px;
-  }
-  .hero .eyebrow::before {
-    content: ''; width: 30px; height: 1px; background: var(--gold);
-  }
+  .hero .kicker .k-red { color: var(--red); }
   .hero h1 {
-    font-family: var(--disp); font-weight: 800;
-    font-size: clamp(3.2rem, 11vw, 8rem);
-    line-height: 0.92; letter-spacing: -0.035em;
-    margin-bottom: 1.75rem;
+    font-family: var(--disp); font-weight: 900; font-stretch: 122%;
+    text-transform: uppercase; letter-spacing: -0.015em;
+    font-size: clamp(3rem, 12.5vw, 10.5rem);
+    line-height: 0.86; margin-bottom: clamp(1.4rem, 3.5vh, 2.4rem);
   }
-  .hero h1 em { font-style: normal; color: var(--gold); }
+  .hero h1 .l2 { display: block; color: transparent; -webkit-text-stroke: 2px var(--ink); }
   .hero .thesis {
-    font-family: var(--disp); font-weight: 500;
-    font-size: clamp(1.3rem, 3.4vw, 2.1rem);
-    line-height: 1.25; letter-spacing: -0.01em;
-    max-width: 22ch; margin-bottom: 1.25rem; color: var(--text);
+    font-family: var(--serif); font-weight: 400; font-style: italic;
+    font-size: clamp(1.25rem, 2.9vw, 1.9rem); line-height: 1.35;
+    max-width: 30ch; margin-bottom: clamp(1.6rem, 4vh, 2.6rem);
+    font-optical-sizing: auto;
   }
-  .hero .sub {
-    font-size: clamp(1rem, 1.6vw, 1.15rem);
-    color: var(--muted); max-width: 50ch; line-height: 1.7;
-    margin-bottom: 2.5rem;
-  }
-  .hero .sub strong { color: var(--text); font-weight: 500; }
-  .scroll-cue {
-    display: inline-flex; align-items: center; gap: 12px;
-    font-family: var(--mono); font-size: 12px;
-    letter-spacing: 0.16em; text-transform: uppercase;
-    color: var(--faint);
-  }
-  .scroll-cue .chev {
-    width: 26px; height: 26px; border: 1px solid var(--line);
-    border-radius: 50%; display: inline-flex;
-    align-items: center; justify-content: center;
-    color: var(--gold);
-    animation: bob 1.8s ease-in-out infinite;
-  }
-  @keyframes bob { 0%,100%{ transform: translateY(0);} 50%{ transform: translateY(5px);} }
+  .thesis mark { background: none; color: var(--green); font-style: italic; }
 
-  /* hero load animation */
-  .h-anim { opacity: 0; transform: translateY(26px); }
-  .loaded .h-anim {
-    opacity: 1; transform: none;
-    transition: opacity 0.8s cubic-bezier(.2,.7,.2,1), transform 0.8s cubic-bezier(.2,.7,.2,1);
+  /* ledger totals */
+  .totals { border-top: 1px solid var(--ink); display: grid; grid-template-columns: repeat(4, 1fr); }
+  .totals .t {
+    border-bottom: 1px solid var(--ink);
+    padding: 14px 14px 16px 0; position: relative;
   }
-  .loaded .h-anim.d1 { transition-delay: 0.05s; }
-  .loaded .h-anim.d2 { transition-delay: 0.18s; }
-  .loaded .h-anim.d3 { transition-delay: 0.31s; }
-  .loaded .h-anim.d4 { transition-delay: 0.44s; }
-  .loaded .h-anim.d5 { transition-delay: 0.57s; }
+  .totals .t + .t { border-left: 1px solid var(--rule); padding-left: 16px; }
+  .totals .t-num {
+    font-family: var(--disp); font-weight: 800; font-stretch: 115%;
+    font-size: clamp(1.5rem, 4.4vw, 3rem); line-height: 1;
+    font-variant-numeric: tabular-nums; letter-spacing: -0.02em;
+  }
+  .totals .t-num sup { font-size: 0.45em; top: -0.9em; color: var(--green); }
+  .totals .t-lab {
+    font-family: var(--mono); font-size: clamp(8.5px, 1.2vw, 10.5px);
+    letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); margin-top: 7px;
+  }
+  .hero .cue {
+    margin-top: clamp(1.2rem, 3vh, 2rem);
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--muted);
+    display: inline-flex; align-items: center; gap: 10px;
+  }
+  .hero .cue::after { content: '↓'; color: var(--red); animation: nudge 1.7s ease-in-out infinite; }
+  @keyframes nudge { 0%,100%{ transform: translateY(0);} 50%{ transform: translateY(4px);} }
 
-  /* ===== TIMELINE ===== */
-  .timeline-wrap {
+  /* hero entrance */
+  .h-anim { opacity: 0; transform: translateY(22px); }
+  .loaded .h-anim { opacity: 1; transform: none; transition: opacity .8s cubic-bezier(.2,.7,.2,1), transform .8s cubic-bezier(.2,.7,.2,1); }
+  .loaded .d1 { transition-delay: .05s } .loaded .d2 { transition-delay: .16s }
+  .loaded .d3 { transition-delay: .27s } .loaded .d4 { transition-delay: .38s }
+  .loaded .d5 { transition-delay: .5s }
+
+  /* ===== SECTION HEADING ===== */
+  .ledger-head {
+    display: flex; justify-content: space-between; align-items: baseline; gap: 1rem;
+    padding: clamp(3.5rem, 9vh, 6rem) 0 12px;
+    border-bottom: 2px solid var(--ink);
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--ink-soft);
+  }
+  .ledger-head .lh-title {
+    font-family: var(--disp); font-weight: 900; font-stretch: 122%;
+    font-size: clamp(1.6rem, 4.5vw, 2.6rem); letter-spacing: 0;
+    text-transform: uppercase; color: var(--ink);
+  }
+
+  /* ===== ENTRIES ===== */
+  .entry {
+    display: grid; grid-template-columns: minmax(150px, 210px) 1fr;
+    gap: clamp(1.25rem, 4vw, 4rem);
+    border-bottom: 1px solid var(--rule);
+    padding: clamp(2.8rem, 7.5vh, 5.5rem) 0;
     position: relative;
-    max-width: var(--maxw); margin: 0 auto;
-    padding: 0 clamp(1.25rem, 5vw, 3rem);
   }
-  .tl-line, .tl-fill {
-    position: absolute; top: 0; bottom: 0;
-    left: calc(clamp(1.25rem, 5vw, 3rem) + var(--rail-x));
-    width: 2px;
+  .entry-meta { position: relative; }
+  .entry-meta .em-stick { position: sticky; top: 78px; }
+  .em-no {
+    font-family: var(--mono); font-size: 11px; font-weight: 600;
+    letter-spacing: 0.18em; color: var(--red); text-transform: uppercase;
+    margin-bottom: 8px;
   }
-  .tl-line { background: var(--line-faint); }
-  .tl-fill {
-    bottom: auto; height: 0;
-    background: linear-gradient(var(--gold-soft), var(--gold));
-    box-shadow: 0 0 14px rgba(230,169,67,0.4);
-    transition: height 0.08s linear;
-  }
-
-  .chapter {
-    position: relative;
-    padding: clamp(4rem, 11vh, 8rem) 0 clamp(4rem, 11vh, 8rem) calc(var(--rail-x) + var(--content-pad));
-    overflow: hidden;
-  }
-  .chapter .ghost {
-    position: absolute; top: -0.18em; right: -0.5vw; z-index: 0;
-    font-family: var(--disp); font-weight: 800;
-    font-size: clamp(7rem, 24vw, 19rem);
-    line-height: 1; letter-spacing: -0.04em;
-    color: rgba(242,238,230,0.035);
-    white-space: nowrap; pointer-events: none; user-select: none;
-  }
-  .chapter .dot {
-    position: absolute; z-index: 3;
-    left: var(--rail-x); top: clamp(4rem, 11vh, 8rem);
-    width: 15px; height: 15px; border-radius: 50%;
-    background: var(--bg); border: 2px solid var(--faint);
-    transform: translate(-50%, 4px);
-    transition: border-color 0.4s, background 0.4s, box-shadow 0.4s;
-  }
-  .chapter .dot.active {
-    border-color: var(--gold); background: var(--gold);
-    box-shadow: 0 0 0 5px rgba(230,169,67,0.16);
-  }
-  .chapter .inner { position: relative; z-index: 2; max-width: 640px; }
-
-  .chapter .chip-no {
-    font-family: var(--mono); font-size: 11.5px;
-    letter-spacing: 0.16em; text-transform: uppercase;
-    color: var(--faint); margin-bottom: 0.5rem;
-  }
-  .chapter .period {
-    font-family: var(--mono); font-size: 13px;
-    letter-spacing: 0.05em; color: var(--gold);
-    margin-bottom: 1.1rem;
-    display: inline-flex; align-items: center; gap: 9px;
-  }
-  .chapter .period::before {
-    content: ''; width: 18px; height: 1px; background: var(--gold);
-  }
-  .chapter h2 {
-    font-family: var(--disp); font-weight: 800;
-    font-size: clamp(2.1rem, 5.5vw, 3.6rem);
-    line-height: 1.0; letter-spacing: -0.03em;
-    margin-bottom: 0.35rem;
-  }
-  .chapter .role {
-    font-family: var(--body); font-weight: 400;
-    font-size: clamp(0.95rem, 1.6vw, 1.1rem);
-    color: var(--muted); margin-bottom: 1.5rem;
-  }
-  .chapter .role .sep { color: var(--faint); margin: 0 9px; }
-  .chapter p.body {
-    font-size: clamp(1rem, 1.55vw, 1.13rem);
-    color: var(--muted); line-height: 1.75; max-width: 56ch;
-  }
-  .chapter p.body strong { color: var(--text); font-weight: 500; }
-  .chapter p.body + p.body { margin-top: 1rem; }
-
-  /* metric row (ScriptSwap) */
-  .metrics {
-    display: flex; flex-wrap: wrap; gap: clamp(1.5rem, 5vw, 3.5rem);
-    margin: 0 0 1.9rem;
-  }
-  .metric .m-num {
-    font-family: var(--disp); font-weight: 800;
-    font-size: clamp(2.2rem, 6vw, 3.4rem);
-    line-height: 1; color: var(--gold);
+  .em-year {
+    font-family: var(--disp); font-weight: 900; font-stretch: 120%;
+    font-size: clamp(2.2rem, 6vw, 3.4rem); line-height: 0.95;
     letter-spacing: -0.02em; font-variant-numeric: tabular-nums;
   }
-  .metric .m-label {
-    font-family: var(--mono); font-size: 11px;
-    letter-spacing: 0.14em; text-transform: uppercase;
-    color: var(--muted); margin-top: 8px;
+  .em-period {
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.06em;
+    color: var(--muted); margin-top: 10px; line-height: 1.7;
+  }
+  .em-tags { margin-top: 14px; display: flex; flex-direction: column; gap: 4px; }
+  .em-tags span {
+    font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--ink-soft);
+  }
+  .em-tags span::before { content: '— '; color: var(--rule); }
+
+  .entry-body { min-width: 0; position: relative; }
+  .entry h2 {
+    font-family: var(--disp); font-weight: 900; font-stretch: 122%;
+    text-transform: uppercase; letter-spacing: -0.01em;
+    font-size: clamp(2rem, 6.5vw, 4.2rem); line-height: 0.95;
+    margin-bottom: 10px;
+  }
+  .entry .role {
+    font-family: var(--mono); font-size: clamp(11px, 1.5vw, 12.5px);
+    letter-spacing: 0.1em; text-transform: uppercase; color: var(--green);
+    margin-bottom: 1.4rem;
+  }
+  .entry .role .sep { color: var(--rule); margin: 0 8px; }
+  .entry p.body {
+    font-size: clamp(1.05rem, 1.8vw, 1.22rem); line-height: 1.66;
+    color: var(--ink-soft); max-width: 58ch;
+    font-optical-sizing: auto; font-weight: 400;
+  }
+  .entry p.body strong { color: var(--ink); font-weight: 600; }
+  .entry p.body + p.body { margin-top: 0.95rem; }
+
+  /* ledger figures table */
+  .figures { margin: 0 0 1.6rem; max-width: 560px; border-top: 1px solid var(--ink); }
+  .figures .fig {
+    display: flex; justify-content: space-between; align-items: baseline;
+    gap: 1rem; padding: 9px 2px; border-bottom: 1px solid var(--rule);
+  }
+  .figures .fig-k {
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.16em;
+    text-transform: uppercase; color: var(--muted);
+  }
+  .figures .fig-dots { flex: 1; border-bottom: 1px dotted var(--rule); transform: translateY(-4px); }
+  .figures .fig-v {
+    font-family: var(--disp); font-weight: 800; font-stretch: 112%;
+    font-size: clamp(1.3rem, 3.2vw, 1.9rem); line-height: 1;
+    font-variant-numeric: tabular-nums; letter-spacing: -0.01em;
+    color: var(--green);
   }
 
-  /* tech chips */
-  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 1.6rem; }
-  .chips .c {
-    font-family: var(--mono); font-size: 12px;
-    letter-spacing: 0.02em;
-    padding: 6px 13px; border-radius: 99px;
-    background: var(--surface); border: 1px solid var(--line-faint);
-    color: var(--muted);
+  /* tech tags */
+  .chips { display: flex; flex-wrap: wrap; gap: 7px 14px; margin-top: 1.4rem; max-width: 60ch; }
+  .chips .c { font-family: var(--mono); font-size: 11.5px; color: var(--ink-soft); }
+  .chips .c::before { content: '['; color: var(--green); }
+  .chips .c::after { content: ']'; color: var(--green); }
+  .chips .c.key { color: var(--ink); font-weight: 600; }
+
+  /* inset note */
+  .note {
+    margin-top: 1.7rem; padding: 1.15rem 1.3rem 1.2rem;
+    border: 1px solid var(--rule); border-left: 3px solid var(--green);
+    background: var(--green-soft); max-width: 60ch;
   }
-  .chips .c.key {
-    border-color: rgba(230,169,67,0.45);
-    color: var(--gold-soft);
+  .note .n-label {
+    font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--green); margin-bottom: 6px; font-weight: 600;
+  }
+  .note .n-title {
+    font-family: var(--disp); font-weight: 800; font-stretch: 112%;
+    font-size: 1.1rem; text-transform: uppercase; letter-spacing: 0.01em;
+    margin-bottom: 5px;
+  }
+  .note p { font-size: 0.98rem; color: var(--ink-soft); line-height: 1.6; }
+
+  /* ===== STAMP (signature element) ===== */
+  .stamp {
+    position: absolute; top: -6px; right: -4px; z-index: 3;
+    font-family: var(--disp); font-weight: 900; font-stretch: 118%;
+    text-transform: uppercase; color: var(--red);
+    border: 3px double var(--red); padding: 7px 14px 6px;
+    letter-spacing: 0.1em; font-size: clamp(11px, 1.7vw, 15px);
+    transform: rotate(7deg); line-height: 1.25; text-align: center;
+    background: var(--red-soft);
+    mix-blend-mode: multiply;
+    box-shadow: inset 0 0 14px rgba(168,50,38,0.12);
+    pointer-events: none; white-space: nowrap;
+  }
+  html[data-theme="dark"] .stamp { mix-blend-mode: normal; box-shadow: inset 0 0 14px rgba(224,96,79,0.18); }
+  .stamp small { display: block; font-family: var(--mono); font-weight: 600; font-size: 0.62em; letter-spacing: 0.24em; }
+  .stamp.hide { opacity: 0; transform: rotate(7deg) scale(1.9); }
+  .stamp.thunk { animation: thunk 0.42s cubic-bezier(.2,1.4,.4,1) forwards; }
+  @keyframes thunk {
+    0% { opacity: 0; transform: rotate(12deg) scale(1.9); }
+    62% { opacity: 1; transform: rotate(6.5deg) scale(0.96); }
+    100% { opacity: 1; transform: rotate(7deg) scale(1); }
   }
 
-  /* inset project card */
-  .inset {
-    margin-top: 1.8rem; padding: 1.4rem 1.5rem;
-    background: var(--surface); border: 1px solid var(--line-faint);
-    border-left: 2px solid var(--gold);
-    border-radius: 4px;
-  }
-  .inset .ins-label {
-    font-family: var(--mono); font-size: 10.5px;
-    letter-spacing: 0.16em; text-transform: uppercase;
-    color: var(--faint); margin-bottom: 7px;
-  }
-  .inset .ins-title {
-    font-family: var(--disp); font-weight: 700;
-    font-size: 1.2rem; margin-bottom: 0.5rem; letter-spacing: -0.01em;
-  }
-  .inset p {
-    font-size: 0.97rem; color: var(--muted); line-height: 1.65; max-width: 58ch;
-  }
+  /* ===== FINAL / EDUCATION GRID ===== */
+  .duo { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--rule); border: 1px solid var(--rule); margin-top: 1.6rem; max-width: 720px; }
+  .duo .cell { background: var(--paper); padding: 1.15rem 1.25rem 1.25rem; }
+  .duo .cell .n-label { font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+  .duo .cell .n-title { font-family: var(--disp); font-weight: 800; font-stretch: 112%; font-size: 1.08rem; text-transform: uppercase; margin-bottom: 4px; }
+  .duo .cell p { font-size: 0.95rem; color: var(--ink-soft); line-height: 1.6; }
 
-  /* stack strip */
-  .stack-grid {
-    display: grid; grid-template-columns: repeat(3, 1fr);
-    gap: 1px; background: var(--line-faint);
-    border: 1px solid var(--line-faint); border-radius: 6px;
-    overflow: hidden; margin-top: 1.6rem;
+  /* stack table */
+  .stack { border-top: 1px solid var(--ink); margin-top: 2rem; max-width: 760px; }
+  .stack .srow {
+    display: grid; grid-template-columns: minmax(120px, 190px) 1fr;
+    gap: 1rem; padding: 11px 2px; border-bottom: 1px solid var(--rule);
   }
-  .stack-grid .col { background: var(--bg); padding: 1.25rem 1.3rem; }
-  .stack-grid .col h4 {
-    font-family: var(--mono); font-weight: 400; font-size: 10.5px;
-    letter-spacing: 0.14em; text-transform: uppercase;
-    color: var(--faint); margin-bottom: 11px;
+  .stack .sk {
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.16em;
+    text-transform: uppercase; color: var(--muted); padding-top: 3px;
   }
-  .stack-grid .col .tags { display: flex; flex-wrap: wrap; gap: 6px; }
-  .stack-grid .col .tags span {
-    font-size: 12.5px; color: var(--muted);
-    font-family: var(--mono);
-  }
-  .stack-grid .col .tags span:not(:last-child)::after {
-    content: '·'; color: var(--faint); margin-left: 6px;
-  }
+  .stack .sv { font-family: var(--mono); font-size: 12.5px; color: var(--ink-soft); line-height: 1.8; }
 
-  /* contact (in final chapter) */
-  .contact-links {
-    display: flex; flex-direction: column; gap: 2px; margin-top: 2rem;
+  /* contact */
+  .contact { margin-top: 2.4rem; max-width: 760px; }
+  .contact a {
+    display: flex; align-items: baseline; gap: 1.1rem;
+    text-decoration: none; padding: 13px 2px;
+    border-top: 1px solid var(--rule);
+    transition: padding-left 0.25s;
   }
-  .contact-links a {
-    display: flex; align-items: baseline; gap: 1.25rem;
-    text-decoration: none; padding: 14px 0;
-    border-top: 1px solid var(--line-faint);
-    transition: padding-left 0.3s, color 0.3s;
+  .contact a:last-child { border-bottom: 1px solid var(--rule); }
+  .contact a:hover { padding-left: 10px; }
+  .contact a:hover .cv { color: var(--green); }
+  .contact a:hover .ca { opacity: 1; transform: none; }
+  .contact .ck {
+    font-family: var(--mono); font-size: 10px; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--muted); min-width: 92px; flex-shrink: 0;
   }
-  .contact-links a:last-child { border-bottom: 1px solid var(--line-faint); }
-  .contact-links a:hover { padding-left: 12px; }
-  .contact-links a:hover .c-val { color: var(--gold-soft); }
-  .contact-links a:hover .c-arrow { opacity: 1; transform: translateX(0); }
-  .contact-links .c-key {
-    font-family: var(--mono); font-size: 11px;
-    letter-spacing: 0.16em; text-transform: uppercase;
-    color: var(--faint); min-width: 96px; flex-shrink: 0;
+  .contact .cv {
+    font-family: var(--disp); font-weight: 700; font-stretch: 112%;
+    font-size: clamp(1.05rem, 2.4vw, 1.5rem); letter-spacing: 0;
+    transition: color 0.25s; flex: 1; min-width: 0; overflow-wrap: anywhere;
   }
-  .contact-links .c-val {
-    font-family: var(--disp); font-weight: 500;
-    font-size: clamp(1.15rem, 2.6vw, 1.7rem);
-    color: var(--text); letter-spacing: -0.01em;
-    transition: color 0.3s; flex: 1;
-  }
-  .contact-links .c-arrow {
-    color: var(--gold); font-size: 1.2rem;
-    opacity: 0; transform: translateX(-8px);
-    transition: opacity 0.3s, transform 0.3s;
-  }
+  .contact .ca { color: var(--red); opacity: 0; transform: translateX(-6px); transition: 0.25s; }
 
   /* ===== FOOTER ===== */
   footer {
-    max-width: var(--maxw); margin: 0 auto;
-    padding: 3rem clamp(1.25rem, 5vw, 3rem) 4rem;
-    border-top: 1px solid var(--line-faint);
-    display: flex; justify-content: space-between; align-items: center;
-    flex-wrap: wrap; gap: 1rem;
-    font-family: var(--mono); font-size: 11.5px;
-    letter-spacing: 0.08em; color: var(--faint);
+    margin-top: clamp(3rem, 8vh, 5rem);
+    border-top: 2px solid var(--ink);
+    padding: 1.4rem 0 2.6rem;
+    display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.8rem;
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--muted);
   }
-  footer .back {
-    text-decoration: none; color: var(--muted);
-    display: inline-flex; align-items: center; gap: 7px;
-    transition: color 0.25s;
-  }
-  footer .back:hover { color: var(--gold-soft); }
+  footer .back { text-decoration: none; transition: color .25s; }
+  footer .back:hover { color: var(--green); }
 
   /* ===== REVEAL ===== */
-  .reveal { opacity: 0; transform: translateY(24px); }
-  .reveal.in {
-    opacity: 1; transform: none;
-    transition: opacity 0.7s cubic-bezier(.2,.7,.2,1), transform 0.7s cubic-bezier(.2,.7,.2,1);
-  }
+  .reveal { opacity: 0; transform: translateY(20px); }
+  .reveal.in { opacity: 1; transform: none; transition: opacity .65s cubic-bezier(.2,.7,.2,1), transform .65s cubic-bezier(.2,.7,.2,1); }
 
   /* ===== RESPONSIVE ===== */
-  @media (max-width: 680px) {
-    :root { --rail-x: 22px; --content-pad: 30px; }
-    .topbar .url { display: none; }
-    .chapter .ghost { font-size: clamp(5.5rem, 34vw, 11rem); top: -0.1em; opacity: 0.85; }
-    .hud { bottom: 14px; right: 14px; }
-    .contact-links .c-key { min-width: 74px; }
-    .stack-grid { grid-template-columns: repeat(2, 1fr); }
+  @media (max-width: 760px) {
+    .entry { grid-template-columns: 1fr; gap: 1.1rem; }
+    .entry-meta .em-stick { position: static; display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; }
+    .em-year { font-size: 1.9rem; }
+    .em-no { margin-bottom: 0; }
+    .em-period { margin-top: 0; width: 100%; }
+    .em-tags { display: none; }
+    .totals { grid-template-columns: 1fr 1fr; }
+    .totals .t:nth-child(odd) { padding-left: 0; border-left: 0; }
+    .totals .t:nth-child(even) { padding-left: 14px; }
+    .duo { grid-template-columns: 1fr; }
+    .stamp { position: static; display: inline-block; margin: 0 0 1rem; }
+    .hero h1 .l2 { -webkit-text-stroke: 1.4px var(--ink); }
   }
-  @media (max-width: 420px) {
-    .chapter .role .sep { display: block; height: 0; margin: 2px 0; }
-    .chapter .role .sep::after { content: ''; }
+
+  @media (max-width: 980px) {
+    .entry { grid-template-columns: minmax(130px, 165px) 1fr; gap: 1.4rem; }
   }
+  @media (max-width: 560px) {
+    body { font-size: 16px; }
+    .topbar { padding-left: max(1rem, env(safe-area-inset-left)); padding-right: max(1rem, env(safe-area-inset-right)); }
+    .topbar .tb-right { display: none; }
+    .hero .kicker span:nth-child(3) { display: none; }
+    .totals .t-num { font-size: 1.6rem; }
+    .figures .fig-v { font-size: 1.25rem; }
+    .yeartab { padding: 8px 13px 8px 12px; bottom: max(1rem, env(safe-area-inset-bottom)); }
+    .yeartab .yt-year { font-size: 1.45rem; }
+    .contact a { padding: 15px 2px; }
+    .stack .srow { grid-template-columns: 1fr; gap: 3px; padding: 12px 2px; }
+    .ledger-head { flex-direction: column; gap: 4px; align-items: flex-start; }
+  }
+  @media (max-width: 380px) {
+    .hero h1 { font-size: 2.6rem; }
+    .totals { grid-template-columns: 1fr 1fr; }
+    .chips { gap: 6px 10px; }
+    .theme-btn { padding: 5px 9px; }
+  }
+  @media (min-width: 1400px) {
+    :root { --maxw: 1240px; }
+    body { font-size: 18px; }
+  }
+  .shell { padding-left: max(clamp(1.1rem, 4.5vw, 3rem), env(safe-area-inset-left)); padding-right: max(clamp(1.1rem, 4.5vw, 3rem), env(safe-area-inset-right)); }
 
   @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
-    .reveal, .h-anim { opacity: 1 !important; transform: none !important; transition: none !important; }
-    .tl-fill { transition: none; }
-    .scroll-cue .chev { animation: none; }
+    .reveal, .h-anim, .stamp.hide { opacity: 1 !important; transform: none !important; transition: none !important; animation: none !important; }
+    .stamp.hide { transform: rotate(7deg) !important; }
+    .hero .cue::after { animation: none; }
+    .yeartab { transition: none; }
   }
 </style>
 </head>
@@ -417,223 +448,281 @@
 
 <!-- TOP BAR -->
 <div class="topbar">
-  <span class="brand">Matteo Letterio<span class="dot-sep">/</span>Full-Stack Dev</span>
+  <span class="brand">Letterio<em>&nbsp;/&nbsp;</em>Record of Work</span>
+  <span class="tb-wrap">
+    <span class="tb-right">King City, ON · Est. 2019</span>
+    <button class="theme-btn" id="themeBtn" aria-label="Switch colour theme"><span class="sw"></span><span id="themeLabel">Dark</span></button>
+  </span>
 </div>
 <div class="progress-top" id="progressTop"></div>
 
-<!-- YEAR HUD -->
-<div class="hud" id="hud">
-  <div class="hud-label">The year</div>
-  <div class="hud-year" id="hudYear">2019</div>
-  <div class="hud-bar"><span id="hudBar"></span></div>
+<!-- YEAR TAB -->
+<div class="yeartab" id="yeartab">
+  <div class="yt-label">Entry year</div>
+  <div class="yt-year" id="ytYear">2019</div>
 </div>
 
-<!-- HERO -->
-<header class="hero">
-  <div class="eyebrow h-anim d1">Building since 2019 · King City, ON</div>
-  <h1 class="h-anim d2">Matteo<br><em>Letterio</em></h1>
-  <p class="thesis h-anim d3">I've been building businesses since I was eleven.</p>
-  <p class="sub h-anim d4">From a clothing label in middle school to a <strong>Solana marketplace I sold seven months after launch</strong> — with AI/ML research internships running in parallel the whole way. This is the timeline — scroll through the years.</p>
-  <div class="h-anim d5">
-    <span class="scroll-cue">Scroll to begin <span class="chev">↓</span></span>
+<div class="shell">
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="kicker h-anim d1">
+      <span>Matteo Letterio · Full-Stack Developer</span>
+      <span class="k-red">Doc. 01 — The Timeline</span>
+      <span>2019 — Present</span>
+    </div>
+    <h1 class="h-anim d2">Matteo<span class="l2">Letterio</span></h1>
+    <p class="thesis h-anim d3">Building businesses since age eleven — <mark>two of them built, grown, and sold</mark> before finishing high school.</p>
+
+    <div class="totals h-anim d4">
+      <div class="t"><div class="t-num">3</div><div class="t-lab">Ventures founded</div></div>
+      <div class="t"><div class="t-num">2</div><div class="t-lab">Exits closed</div></div>
+      <div class="t"><div class="t-num">$300K<sup>+</sup></div><div class="t-lab">Combined rev &amp; volume</div></div>
+      <div class="t"><div class="t-num">1,000<sup>+</sup></div><div class="t-lab">Volunteer hours</div></div>
+    </div>
+
+    <span class="cue h-anim d5">Scroll the record</span>
+  </header>
+
+  <!-- LEDGER -->
+  <div id="timeline">
+    <div class="ledger-head reveal">
+      <span class="lh-title">The Entries</span>
+      <span>09 records · chronological</span>
+    </div>
+
+    <!-- 01 PRIMAL -->
+    <section class="entry" data-year="2019">
+      <div class="entry-meta"><div class="em-stick">
+        <div class="em-no">No. 01</div>
+        <div class="em-year">2019</div>
+        <div class="em-period">The origin · Age 11</div>
+        <div class="em-tags"><span>E-commerce</span><span>First venture</span></div>
+      </div></div>
+      <div class="entry-body">
+        <h2 class="reveal">Primal</h2>
+        <div class="role reveal">Founder <span class="sep">·</span> Clothing brand &amp; first e-commerce business</div>
+        <p class="body reveal">My first business. At eleven I started <strong>Primal</strong>, a clothing brand — designing the pieces, building the storefront, and figuring out how to actually sell something online.</p>
+        <p class="body reveal">It was small, but it was real. It taught me the whole loop before I had words for any of it: product, brand, customers, fulfillment. That was the first time I felt the pull of building something people actually wanted — and it never really let go.</p>
+      </div>
+    </section>
+
+    <!-- 02 CORTEXA -->
+    <section class="entry" data-year="2023">
+      <div class="entry-meta"><div class="em-stick">
+        <div class="em-no">No. 02</div>
+        <div class="em-year">2023</div>
+        <div class="em-period">Sep 2023 – Jun 2024<br>Remote · Part-time<br>Concurrent with studies</div>
+        <div class="em-tags"><span>Applied AI</span><span>Education</span></div>
+      </div></div>
+      <div class="entry-body">
+        <h2 class="reveal">Cortexa</h2>
+        <div class="role reveal">AI Training &amp; Education Intern</div>
+        <p class="body reveal">My first step into the AI world — from the human side. I <strong>taught users how to work effectively with AI models</strong> like Claude and other LLMs, covering prompting techniques and practical, real-task workflows.</p>
+        <p class="body reveal">I developed training materials and hands-on examples that helped <strong>non-technical users</strong> actually apply AI tools to their day-to-day work — translating a fast-moving field into something people could use.</p>
+      </div>
+    </section>
+
+    <!-- 03 VELORIX -->
+    <section class="entry" data-year="2024">
+      <div class="entry-meta"><div class="em-stick">
+        <div class="em-no">No. 03</div>
+        <div class="em-year">2024</div>
+        <div class="em-period">Mar 2024 – Jan 2026<br>Remote · Part-time</div>
+        <div class="em-tags"><span>Sales</span><span>Full cycle</span></div>
+      </div></div>
+      <div class="entry-body">
+        <h2 class="reveal">Velorix Partners</h2>
+        <div class="role reveal">Business Development Executive</div>
+        <p class="body reveal">Building teaches you to make things; sales teaches you why people buy them. At Velorix I <strong>generated new business through outbound prospecting and consultative selling</strong>, consistently exceeding monthly targets.</p>
+        <p class="body reveal">I managed the <strong>full sales cycle</strong> — from first outreach to close — while keeping CRM records accurate and holding a strong conversion rate. Almost two years of it, run alongside everything else on this page.</p>
+      </div>
+    </section>
+
+    <!-- 04 LUCID MIND -->
+    <section class="entry" data-year="2024">
+      <div class="entry-meta"><div class="em-stick">
+        <div class="em-no">No. 04</div>
+        <div class="em-year">2024</div>
+        <div class="em-period">Sep 2024 – Jun 2025<br>Remote · Part-time<br>Concurrent with studies</div>
+        <div class="em-tags"><span>Frontend</span><span>AI product</span></div>
+      </div></div>
+      <div class="entry-body">
+        <h2 class="reveal">Lucid Mind AI</h2>
+        <div class="role reveal">Frontend Engineering Intern</div>
+        <p class="body reveal">From teaching AI to building the interface people meet it through. I <strong>built and refined frontend UI components</strong> for a production conversational AI product, iterating on layout and usability.</p>
+        <p class="body reveal">Before every release cycle I ran <strong>structured regression tests across UI components</strong> — catching edge-case failures before they ever reached a user.</p>
+      </div>
+    </section>
+
+    <!-- 05 TOWNSHIP -->
+    <section class="entry" data-year="2025">
+      <div class="entry-meta"><div class="em-stick">
+        <div class="em-no">No. 05</div>
+        <div class="em-year">2025</div>
+        <div class="em-period">Jul 2025 – Aug 2025<br>Nobleton, ON</div>
+        <div class="em-tags"><span>Leadership</span><span>Community</span></div>
+      </div></div>
+      <div class="entry-body">
+        <h2 class="reveal">Township of King</h2>
+        <div class="role reveal">Youth Program Facilitator</div>
+        <p class="body reveal">A summer running daily programming for kids and teens — keeping groups <strong>safe, included, and actually having fun</strong>.</p>
+        <p class="body reveal">Building software is solitary; this wasn't. It sharpened the part of the job that has nothing to do with code: reading a room, earning trust, and keeping a group of people engaged when it would be easier to lose them.</p>
+      </div>
+    </section>
+
+    <!-- 06 SCRIPTSWAP -->
+    <section class="entry" data-year="2025">
+      <div class="entry-meta"><div class="em-stick">
+        <div class="em-no">No. 06 · Flagship</div>
+        <div class="em-year">2025</div>
+        <div class="em-period">Oct 2025 – Apr 2026<br>Remote · Full-time</div>
+        <div class="em-tags"><span>Founder</span><span>Full-stack</span><span>Solana</span></div>
+      </div></div>
+      <div class="entry-body">
+        <div class="stamp hide" data-stamp>Acquired<small>Apr 2026</small></div>
+        <h2 class="reveal">ScriptSwap</h2>
+        <div class="role reveal">Founder &amp; Full-Stack Developer</div>
+
+        <div class="figures reveal">
+          <div class="fig"><span class="fig-k">Revenue generated</span><span class="fig-dots"></span><span class="fig-v" data-count="200" data-prefix="$" data-suffix="K+">$0</span></div>
+          <div class="fig"><span class="fig-k">Active users</span><span class="fig-dots"></span><span class="fig-v" data-count="350" data-suffix="+">0</span></div>
+          <div class="fig"><span class="fig-k">Build to exit</span><span class="fig-dots"></span><span class="fig-v" data-count="7" data-suffix=" mo">0</span></div>
+        </div>
+
+        <p class="body reveal">The one I'm proudest of. I designed, built, and shipped a <strong>full-stack Solana marketplace end to end</strong> — product, engineering, and operations, all of it mine.</p>
+        <p class="body reveal">JavaScript and Node.js on Firebase. Secure auth with Firebase Authentication and role-based access, a Firestore backend served through serverless Cloud Functions and a RESTful API layer handling every marketplace transaction, and on-chain SOL payments powering peer-to-peer trades. It grew from zero to 350+ active users within four months through organic, product-led growth — and over $200,000 in revenue. <strong>Seven months after the initial build, I negotiated its sale and executed a full handoff.</strong></p>
+        <p class="body reveal">I still own the domain and all rights. The sale was the first chapter — <strong>a relaunch is already in the works, bigger and better.</strong></p>
+
+        <div class="chips reveal">
+          <span class="c key">JavaScript</span><span class="c key">Node.js</span><span class="c">Firebase</span><span class="c">Firestore</span><span class="c">Cloud Functions</span><span class="c">REST APIs</span><span class="c">Solana / SOL</span><span class="c">On-chain payments</span>
+        </div>
+
+        <div class="note reveal">
+          <div class="n-label">Also from this period · Selected project</div>
+          <div class="n-title">Blockchain fund-tracing analysis</div>
+          <p>Traced stolen cryptocurrency by analyzing on-chain transaction histories and following fund flows across multiple wallets — then identified the people responsible by clustering related addresses and linking on-chain activity to real-world identifiers.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 07 ELITE CARDS -->
+    <section class="entry" data-year="2025">
+      <div class="entry-meta"><div class="em-stick">
+        <div class="em-no">No. 07</div>
+        <div class="em-year">2025</div>
+        <div class="em-period">Nov 2025 – Present<br>Woodbridge, ON</div>
+        <div class="em-tags"><span>Sales</span><span>In person</span></div>
+      </div></div>
+      <div class="entry-body">
+        <h2 class="reveal">Elite Cards Toronto</h2>
+        <div class="role reveal">Client Engagement Specialist</div>
+        <p class="body reveal">Alongside building, I sell. At Elite Cards I <strong>consistently exceed weekly sales targets</strong> through consultative, value-based selling and deep product knowledge across sports and TCG categories — turning product fluency into revenue, face to face.</p>
+      </div>
+    </section>
+
+    <!-- 08 ZEROKYC -->
+    <section class="entry" data-year="2026">
+      <div class="entry-meta"><div class="em-stick">
+        <div class="em-no">No. 08 · Second exit</div>
+        <div class="em-year">2026</div>
+        <div class="em-period">May 2026 – Jun 2026<br>Remote · Part-time</div>
+        <div class="em-tags"><span>Founder</span><span>Crypto</span></div>
+      </div></div>
+      <div class="entry-body">
+        <div class="stamp hide" data-stamp>Acquired<small>Jun 2026</small></div>
+        <h2 class="reveal">ZeroKyc</h2>
+        <div class="role reveal">Founder</div>
+
+        <div class="figures reveal">
+          <div class="fig"><span class="fig-k">Swap volume</span><span class="fig-dots"></span><span class="fig-v" data-count="100" data-prefix="$" data-suffix="K+">$0</span></div>
+          <div class="fig"><span class="fig-k">Build to exit</span><span class="fig-dots"></span><span class="fig-v" data-count="1" data-suffix=" mo">0</span></div>
+        </div>
+
+        <p class="body reveal">One month after selling ScriptSwap, I did it again — faster. I <strong>built and launched a cryptocurrency swapping service</strong> that processed $100,000+ in swap volume within its first month of operation.</p>
+        <p class="body reveal">The build was designed to run itself — operations were largely hands-off after launch. <strong>Within one month, I negotiated and executed a sale of the platform.</strong> Smaller than ScriptSwap, but proof the first exit wasn't luck: it was a repeatable process.</p>
+      </div>
+    </section>
+
+    <!-- 09 NOW -->
+    <section class="entry" data-year="2026" style="border-bottom:0">
+      <div class="entry-meta"><div class="em-stick">
+        <div class="em-no">No. 09</div>
+        <div class="em-year">Now</div>
+        <div class="em-period">2026 · The present</div>
+        <div class="em-tags"><span>Education</span><span>Next chapter</span></div>
+      </div></div>
+      <div class="entry-body">
+        <h2 class="reveal">What's Next</h2>
+        <div class="role reveal">Cardinal Carter Catholic H.S. <span class="sep">·</span> Aurora, ON <span class="sep">·</span> Sep 2022 – Jun 2026</div>
+        <p class="body reveal">I graduated this June with my Ontario Secondary School Diploma (OSSD) from Cardinal Carter Catholic High School — as an <strong>Ontario Scholar</strong>, on the <strong>honour roll</strong>.</p>
+        <p class="body reveal">In September I start at <strong>York University (Keele Campus)</strong> in Toronto — Bachelor of Arts in Communication &amp; Media Studies, class of 2030.</p>
+        <p class="body reveal">I've been doing this for myself since I was eleven. Now I want to do it on a team.</p>
+
+        <div class="duo reveal">
+          <div class="cell">
+            <div class="n-label">Education · Next</div>
+            <div class="n-title">York University — Keele</div>
+            <p>Toronto, ON · Sep 2026 – Jun 2030 (expected) · Bachelor of Arts, Communication &amp; Media Studies.</p>
+          </div>
+          <div class="cell">
+            <div class="n-label">Community service</div>
+            <div class="n-title">1,000+ hours volunteered</div>
+            <p>Across local youth programs, recreational events, and outreach initiatives.</p>
+          </div>
+        </div>
+
+        <div class="stack reveal">
+          <div class="srow"><span class="sk">Languages</span><span class="sv">JavaScript · Python · C · SQL · HTML · CSS</span></div>
+          <div class="srow"><span class="sk">Frameworks &amp; backend</span><span class="sv">Node.js · Flask · REST APIs · Cloud Functions (serverless) · Firestore (NoSQL) · SQLite · Firebase Auth · Stripe API</span></div>
+          <div class="srow"><span class="sk">Cloud &amp; tools</span><span class="sv">AWS · Google Cloud Platform · Git · GitHub · Google Workspace</span></div>
+          <div class="srow"><span class="sk">AI</span><span class="sv">Prompt engineering · AI tool training &amp; education (Claude, ChatGPT) · Conversational AI product testing</span></div>
+          <div class="srow"><span class="sk">Web3</span><span class="sv">Solana · On-chain transactions · Wallet analysis · Blockchain fund tracing</span></div>
+        </div>
+
+        <div class="contact reveal">
+          <a href="mailto:lettmatt51@gmail.com"><span class="ck">Email</span><span class="cv">lettmatt51@gmail.com</span><span class="ca">↗</span></a>
+          <a href="tel:+14373291375"><span class="ck">Phone</span><span class="cv">+1 (437) 329-1375</span><span class="ca">↗</span></a>
+          <a href="https://linkedin.com/in/matteo-letterio" target="_blank" rel="noopener"><span class="ck">LinkedIn</span><span class="cv">matteo-letterio</span><span class="ca">↗</span></a>
+          <a href="https://github.com/mattlett" target="_blank" rel="noopener"><span class="ck">GitHub</span><span class="cv">mattlett</span><span class="ca">↗</span></a>
+          <a href="https://mattlett.github.io" target="_blank" rel="noopener"><span class="ck">Site</span><span class="cv">mattlett.github.io</span><span class="ca">↗</span></a>
+        </div>
+      </div>
+    </section>
   </div>
-</header>
 
-<!-- TIMELINE -->
-<div class="timeline-wrap" id="timeline">
-  <div class="tl-line"></div>
-  <div class="tl-fill" id="tlFill"></div>
+  <!-- FOOTER -->
+  <footer>
+    <span>© 2026 Matteo Letterio · Record of work, 2019–2026</span>
+    <a class="back" href="#top" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;">↑ Back to the start</a>
+  </footer>
 
-  <!-- CHAPTER 01 — PRIMAL -->
-  <section class="chapter" data-year="2019">
-    <div class="ghost" aria-hidden="true">2019</div>
-    <div class="dot"></div>
-    <div class="inner">
-      <div class="chip-no reveal">Chapter 01 · Age 11</div>
-      <div class="period reveal" style="transition-delay:.06s">2019 · The origin</div>
-      <h2 class="reveal" style="transition-delay:.1s">Primal</h2>
-      <div class="role reveal" style="transition-delay:.16s">Founder · Clothing brand &amp; first e-commerce business</div>
-      <p class="body reveal" style="transition-delay:.22s">My first business. At eleven I started <strong>Primal</strong>, a clothing brand — designing the pieces, building the storefront, and figuring out how to actually sell something online.</p>
-      <p class="body reveal" style="transition-delay:.28s">It was small, but it was real. It taught me the whole loop before I had words for any of it: product, brand, customers, fulfillment. That was the first time I felt the pull of building something people actually wanted — and it never really let go.</p>
-    </div>
-  </section>
-
-  <!-- CHAPTER 02 — CORTEXA -->
-  <section class="chapter" data-year="2023">
-    <div class="ghost" aria-hidden="true">2023</div>
-    <div class="dot"></div>
-    <div class="inner">
-      <div class="chip-no reveal">Chapter 02 · AI research</div>
-      <div class="period reveal" style="transition-delay:.06s">Sep 2023 – Jun 2024</div>
-      <h2 class="reveal" style="transition-delay:.1s">Cortexa</h2>
-      <div class="role reveal" style="transition-delay:.16s">AI Research Intern <span class="sep">·</span> Remote, Part-Time, Concurrent with Studies</div>
-      <p class="body reveal" style="transition-delay:.22s">My first step into machine learning. I <strong>trained and evaluated supervised ML models</strong> for business analytics and forecasting across structured enterprise datasets.</p>
-      <p class="body reveal" style="transition-delay:.28s">Improved model accuracy by <strong>8%</strong> through systematic data cleaning, outlier removal, and feature engineering before each training run — the unglamorous work that actually moves the number.</p>
-    </div>
-  </section>
-
-  <!-- CHAPTER 04 — LUCID MIND AI -->
-  <section class="chapter" data-year="2024">
-    <div class="ghost" aria-hidden="true">2024</div>
-    <div class="dot"></div>
-    <div class="inner">
-      <div class="chip-no reveal">Chapter 03 · NLP &amp; prompt engineering</div>
-      <div class="period reveal" style="transition-delay:.06s">Sep 2024 – Jun 2025</div>
-      <h2 class="reveal" style="transition-delay:.1s">Lucid Mind AI</h2>
-      <div class="role reveal" style="transition-delay:.16s">NLP Engineering Intern <span class="sep">·</span> Remote, Part-Time, Concurrent with Studies</div>
-      <p class="body reveal" style="transition-delay:.22s">Designed and iterated on <strong>50+ prompt templates</strong> for a production conversational AI product, measurably improving response accuracy against internal evaluation benchmarks.</p>
-      <p class="body reveal" style="transition-delay:.28s">Ran structured regression tests across UI components before each release cycle, catching edge-case failures ahead of launch.</p>
-    </div>
-  </section>
-
-  <!-- CHAPTER 05 — TOWNSHIP -->
-  <section class="chapter" data-year="2025">
-    <div class="ghost" aria-hidden="true">2025</div>
-    <div class="dot"></div>
-    <div class="inner">
-      <div class="chip-no reveal">Chapter 04 · Summer 2025</div>
-      <div class="period reveal" style="transition-delay:.06s">Jul 2025 – Aug 2025</div>
-      <h2 class="reveal" style="transition-delay:.1s">Township of King</h2>
-      <div class="role reveal" style="transition-delay:.16s">Youth Program Facilitator <span class="sep">·</span> Nobleton, ON</div>
-      <p class="body reveal" style="transition-delay:.22s">A summer running daily programming for kids and teens — keeping groups <strong>safe, included, and actually having fun</strong>.</p>
-      <p class="body reveal" style="transition-delay:.28s">Building software is solitary; this wasn't. It sharpened the part of the job that has nothing to do with code: reading a room, earning trust, and keeping a group of people engaged when it would be easier to lose them.</p>
-    </div>
-  </section>
-
-  <!-- CHAPTER 04 — SCRIPTSWAP (PEAK) -->
-  <section class="chapter" data-year="2025">
-    <div class="ghost" aria-hidden="true">2025</div>
-    <div class="dot"></div>
-    <div class="inner">
-      <div class="chip-no reveal">Chapter 05 · The flagship</div>
-      <div class="period reveal" style="transition-delay:.06s">Oct 2025 – Apr 2026</div>
-      <h2 class="reveal" style="transition-delay:.1s">ScriptSwap</h2>
-      <div class="role reveal" style="transition-delay:.16s">Founder &amp; Full-Stack Developer <span class="sep">·</span> Remote</div>
-
-      <div class="metrics reveal" id="metrics" style="transition-delay:.2s">
-        <div class="metric">
-          <div class="m-num" data-count="200" data-prefix="$" data-suffix="K+">$0</div>
-          <div class="m-label">Revenue generated</div>
-        </div>
-        <div class="metric">
-          <div class="m-num" data-count="350" data-suffix="+">0</div>
-          <div class="m-label">Active users</div>
-        </div>
-        <div class="metric">
-          <div class="m-num" data-count="7" data-suffix=" mo">0</div>
-          <div class="m-label">Build to exit</div>
-        </div>
-      </div>
-
-      <p class="body reveal" style="transition-delay:.26s">The one I'm proudest of. I designed, built, and shipped a <strong>full-stack Solana marketplace end to end</strong> — product, engineering, and operations, all of it mine.</p>
-      <p class="body reveal" style="transition-delay:.32s">JavaScript and Node.js on Firebase. Secure auth with Firebase Authentication, a Firestore backend served through serverless Cloud Functions and REST APIs, and on-chain SOL transactions powering every payment. It grew to 350+ active users and over $200,000 in revenue. <strong>Seven months after launch, I negotiated its sale.</strong></p>
-      <p class="body reveal" style="transition-delay:.35s">I still own the domain and all rights. The sale was the first chapter — <strong>a relaunch is already in the works, bigger and better.</strong></p>
-
-      <div class="chips reveal" style="transition-delay:.38s">
-        <span class="c key">JavaScript</span>
-        <span class="c key">Node.js</span>
-        <span class="c">Firebase</span>
-        <span class="c">Firestore</span>
-        <span class="c">Cloud Functions</span>
-        <span class="c">REST APIs</span>
-        <span class="c">Solana / SOL</span>
-        <span class="c">On-chain payments</span>
-      </div>
-
-      <div class="inset reveal" style="transition-delay:.44s">
-        <div class="ins-label">Also from this period · Selected project</div>
-        <div class="ins-title">Blockchain fund-tracing analysis</div>
-        <p>Traced stolen cryptocurrency by analyzing on-chain transaction histories and following fund flows across multiple wallets — then identified the people responsible by clustering related addresses and linking on-chain activity to real-world actors.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- CHAPTER 05 — ELITE CARDS -->
-  <section class="chapter" data-year="2025">
-    <div class="ghost" aria-hidden="true">2025</div>
-    <div class="dot"></div>
-    <div class="inner">
-      <div class="chip-no reveal">Chapter 06 · Alongside the building</div>
-      <div class="period reveal" style="transition-delay:.06s">Nov 2025 – Present</div>
-      <h2 class="reveal" style="transition-delay:.1s">Elite Cards Toronto</h2>
-      <div class="role reveal" style="transition-delay:.16s">Client Engagement Specialist <span class="sep">·</span> Woodbridge, ON</div>
-      <p class="body reveal" style="transition-delay:.22s">Alongside building, I sell. At Elite Cards I <strong>consistently beat weekly targets</strong> through value-based upselling and deep product knowledge across major sports and trading-card categories — turning product fluency into revenue, face to face.</p>
-    </div>
-  </section>
-
-  <!-- CHAPTER 06 — NOW -->
-  <section class="chapter" data-year="2026">
-    <div class="ghost" aria-hidden="true">2026</div>
-    <div class="dot"></div>
-    <div class="inner">
-      <div class="chip-no reveal">Chapter 07 · The present</div>
-      <div class="period reveal" style="transition-delay:.06s">2026 · Now</div>
-      <h2 class="reveal" style="transition-delay:.1s">What's next</h2>
-      <div class="role reveal" style="transition-delay:.16s">Cardinal Carter Catholic H.S. <span class="sep">·</span> Aurora, ON <span class="sep">·</span> Sep 2022 – Jun 2026</div>
-      <p class="body reveal" style="transition-delay:.18s">I graduated this June with my Ontario Secondary School Diploma (OSSD) from Cardinal Carter Catholic High School, on the honour roll.</p>
-      <p class="body reveal" style="transition-delay:.24s">I've been doing this for myself since I was eleven. Now I want to do it on a team.</p>
-
-      <div class="inset reveal" style="transition-delay:.27s">
-        <div class="ins-label">Community service</div>
-        <div class="ins-title">1,000+ hours volunteered</div>
-        <p>Completed 1,000+ hours of volunteer community service across local youth programs, recreational events, and community outreach initiatives spanning multiple years.</p>
-      </div>
-
-      <div class="stack-grid reveal" style="transition-delay:.3s">
-        <div class="col">
-          <h4>Languages</h4>
-          <div class="tags"><span>JavaScript</span><span>Python</span><span>C</span><span>SQL</span><span>HTML</span><span>CSS</span></div>
-        </div>
-        <div class="col">
-          <h4>Frameworks &amp; backend</h4>
-          <div class="tags"><span>Node.js</span><span>Flask</span><span>REST APIs</span><span>Cloud Functions</span><span>Firestore</span><span>SQLite</span><span>Firebase Auth</span><span>Stripe API</span></div>
-        </div>
-        <div class="col">
-          <h4>Cloud &amp; tools</h4>
-          <div class="tags"><span>AWS</span><span>Google Cloud Platform</span><span>Git</span><span>GitHub</span><span>Google Workspace</span></div>
-        </div>
-        <div class="col">
-          <h4>AI / ML</h4>
-          <div class="tags"><span>Supervised machine learning</span><span>Neural networks</span><span>Prompt engineering</span><span>Model evaluation</span><span>Data annotation</span></div>
-        </div>
-        <div class="col">
-          <h4>Web3</h4>
-          <div class="tags"><span>Solana</span><span>On-chain transactions</span><span>Wallet analysis</span><span>Blockchain fund tracing</span></div>
-        </div>
-      </div>
-
-      <div class="contact-links reveal" style="transition-delay:.36s">
-        <a href="mailto:lettmatt51@gmail.com">
-          <span class="c-key">Email</span><span class="c-val">lettmatt51@gmail.com</span><span class="c-arrow">↗</span>
-        </a>
-        <a href="tel:+14373291375">
-          <span class="c-key">Phone</span><span class="c-val">+1 (437) 329-1375</span><span class="c-arrow">↗</span>
-        </a>
-        <a href="https://linkedin.com/in/matteo-letterio" target="_blank" rel="noopener">
-          <span class="c-key">LinkedIn</span><span class="c-val">matteo-letterio</span><span class="c-arrow">↗</span>
-        </a>
-        <a href="https://github.com/mattlett" target="_blank" rel="noopener">
-          <span class="c-key">GitHub</span><span class="c-val">mattlett</span><span class="c-arrow">↗</span>
-        </a>
-      </div>
-    </div>
-  </section>
 </div>
-
-<!-- FOOTER -->
-<footer>
-  <span>© 2026 Matteo Letterio</span>
-  <a class="back" href="#top" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;">↑ Back to the start</a>
-</footer>
 
 <script>
 (function () {
+  /* theme: defaults to system preference; toggle is session-only */
+  var root = document.documentElement;
+  var themeBtn = document.getElementById('themeBtn');
+  var themeLabel = document.getElementById('themeLabel');
+  function applyTheme(t) {
+    if (t === 'dark') { root.setAttribute('data-theme', 'dark'); themeLabel.textContent = 'Light'; }
+    else { root.removeAttribute('data-theme'); themeLabel.textContent = 'Dark'; }
+  }
+  var sysDark = window.matchMedia('(prefers-color-scheme: dark)');
+  applyTheme(sysDark.matches ? 'dark' : 'light');
+  sysDark.addEventListener && sysDark.addEventListener('change', function (e) {
+    applyTheme(e.matches ? 'dark' : 'light');
+  });
+  themeBtn.addEventListener('click', function () {
+    applyTheme(root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+  });
+
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   /* hero load-in */
   window.addEventListener('load', function () {
     requestAnimationFrame(function () { document.body.classList.add('loaded'); });
-    setTimeout(measure, 120);
   });
   document.body.classList.add('loaded');
 
@@ -644,23 +733,38 @@
       entries.forEach(function (e) {
         if (e.isIntersecting) { e.target.classList.add('in'); ro.unobserve(e.target); }
       });
-    }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+    }, { threshold: 0.1, rootMargin: '0px 0px -6% 0px' });
     revealEls.forEach(function (el) { ro.observe(el); });
   } else {
     revealEls.forEach(function (el) { el.classList.add('in'); });
   }
 
-  /* counters */
-  var metricsBlock = document.getElementById('metrics');
-  var counted = false;
-  function runCounters() {
-    if (counted) return; counted = true;
-    document.querySelectorAll('.m-num[data-count]').forEach(function (el) {
+  /* stamps */
+  var stamps = document.querySelectorAll('[data-stamp]');
+  if ('IntersectionObserver' in window && !reduceMotion) {
+    var so = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) {
+          e.target.classList.remove('hide');
+          e.target.classList.add('thunk');
+          so.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.6 });
+    stamps.forEach(function (s) { so.observe(s); });
+  } else {
+    stamps.forEach(function (s) { s.classList.remove('hide'); });
+  }
+
+  /* counters (per figures block) */
+  function runCounters(block) {
+    if (block.__counted) return; block.__counted = true;
+    block.querySelectorAll('[data-count]').forEach(function (el) {
       var target = parseInt(el.getAttribute('data-count'), 10);
       var prefix = el.getAttribute('data-prefix') || '';
       var suffix = el.getAttribute('data-suffix') || '';
       if (reduceMotion) { el.textContent = prefix + target + suffix; return; }
-      var start = null, dur = 1400;
+      var start = null, dur = 1200;
       function step(ts) {
         if (!start) start = ts;
         var p = Math.min((ts - start) / dur, 1);
@@ -672,38 +776,33 @@
       requestAnimationFrame(step);
     });
   }
-  if (metricsBlock && 'IntersectionObserver' in window) {
+  var figBlocks = document.querySelectorAll('.figures');
+  if ('IntersectionObserver' in window) {
     var co = new IntersectionObserver(function (entries) {
-      entries.forEach(function (e) { if (e.isIntersecting) { runCounters(); co.disconnect(); } });
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { runCounters(e.target); co.unobserve(e.target); }
+      });
     }, { threshold: 0.4 });
-    co.observe(metricsBlock);
-  } else { runCounters(); }
+    figBlocks.forEach(function (b) { co.observe(b); });
+  } else {
+    figBlocks.forEach(runCounters);
+  }
 
-  /* scroll-driven spine, HUD, progress */
-  var timeline = document.getElementById('timeline');
-  var tlFill = document.getElementById('tlFill');
-  var dots = Array.prototype.slice.call(document.querySelectorAll('.chapter .dot'));
-  var chapters = Array.prototype.slice.call(document.querySelectorAll('.chapter'));
+  /* top progress + year tab */
   var progressTop = document.getElementById('progressTop');
-  var hud = document.getElementById('hud');
-  var hudYear = document.getElementById('hudYear');
-  var hudBar = document.getElementById('hudBar');
+  var yeartab = document.getElementById('yeartab');
+  var ytYear = document.getElementById('ytYear');
+  var entries = Array.prototype.slice.call(document.querySelectorAll('.entry'));
+  var timeline = document.getElementById('timeline');
 
-  var wrapTop = 0, wrapH = 0, dotYs = [], chapTops = [], chapBots = [];
-  var years = chapters.map(function (c) { return c.getAttribute('data-year'); });
-  var firstYear = parseInt(years[0], 10);
-  var lastYear = parseInt(years[years.length - 1], 10);
-
+  var entryTops = [], tlTop = 0, tlBot = 0;
   function measure() {
-    var rect = timeline.getBoundingClientRect();
-    wrapTop = rect.top + window.pageYOffset;
-    wrapH = timeline.offsetHeight;
-    dotYs = dots.map(function (d) {
-      var ch = d.closest('.chapter');
-      return ch.offsetTop + d.offsetTop;
+    entryTops = entries.map(function (en) {
+      return en.getBoundingClientRect().top + window.pageYOffset;
     });
-    chapTops = chapters.map(function (c) { return c.offsetTop; });
-    chapBots = chapters.map(function (c) { return c.offsetTop + c.offsetHeight; });
+    var r = timeline.getBoundingClientRect();
+    tlTop = r.top + window.pageYOffset;
+    tlBot = tlTop + timeline.offsetHeight;
     onScroll();
   }
 
@@ -712,53 +811,24 @@
     var scrollY = window.pageYOffset;
     var vh = window.innerHeight;
     var docH = document.documentElement.scrollHeight - vh;
+    progressTop.style.width = ((docH > 0 ? Math.min(Math.max(scrollY / docH, 0), 1) : 0) * 100) + '%';
 
-    /* top progress */
-    var gp = docH > 0 ? Math.min(Math.max(scrollY / docH, 0), 1) : 0;
-    progressTop.style.width = (gp * 100) + '%';
+    var playhead = scrollY + vh * 0.45;
+    var show = playhead > tlTop && playhead < tlBot && (scrollY + vh) < (document.documentElement.scrollHeight - 40);
+    yeartab.classList.toggle('show', show);
 
-    /* playhead within timeline */
-    var playhead = scrollY + vh * 0.5;
-    var posInWrap = playhead - wrapTop;
-    var fillPx = Math.min(Math.max(posInWrap, 0), wrapH);
-    tlFill.style.height = fillPx + 'px';
-
-    /* dots */
-    for (var i = 0; i < dots.length; i++) {
-      if (fillPx >= dotYs[i] - 1) dots[i].classList.add('active');
-      else dots[i].classList.remove('active');
+    var idx = 0;
+    for (var i = 0; i < entryTops.length; i++) {
+      if (playhead >= entryTops[i]) idx = i;
     }
-
-    /* HUD show + year */
-    var atBottom = (scrollY + vh) >= (document.documentElement.scrollHeight - 10);
-    var inTimeline = posInWrap > -vh * 0.35 && posInWrap < wrapH + vh * 0.2;
-    if (inTimeline && !atBottom) hud.classList.add('show'); else hud.classList.remove('show');
-
-    var activeIdx = 0;
-    for (var j = 0; j < chapters.length; j++) {
-      if (posInWrap >= chapTops[j]) activeIdx = j;
+    var y = entries[idx].getAttribute('data-year');
+    var label = (y === '2026' && idx === entries.length - 1) ? 'NOW' : y;
+    if (ytYear.textContent !== label) {
+      ytYear.textContent = label;
+      ytYear.classList.remove('tick');
+      void ytYear.offsetWidth;
+      ytYear.classList.add('tick');
     }
-    var y = years[activeIdx];
-    if (hudYear.textContent !== y) {
-      hudYear.classList.remove('enter');
-      hudYear.classList.add('exit');
-      var nextY = y;
-      setTimeout(function () {
-        hudYear.textContent = nextY;
-        hudYear.classList.remove('exit');
-        hudYear.classList.add('enter');
-      }, 180);
-    }
-
-    /* hud bar: progress across full span of years */
-    var span = (lastYear - firstYear) || 1;
-    var curY = parseInt(y, 10);
-    var withinChapter = 0;
-    var ct = chapTops[activeIdx], cb = chapBots[activeIdx];
-    if (cb > ct) withinChapter = Math.min(Math.max((posInWrap - ct) / (cb - ct), 0), 1);
-    var yearProg = ((curY - firstYear) + withinChapter * 0.0) / span;
-    hudBar.style.width = (Math.min(Math.max(yearProg, 0), 1) * 100) + '%';
-
     ticking = false;
   }
 
@@ -769,6 +839,7 @@
     clearTimeout(window.__rt);
     window.__rt = setTimeout(measure, 120);
   });
+  window.addEventListener('load', function () { setTimeout(measure, 150); });
 
   measure();
   setTimeout(measure, 400);
